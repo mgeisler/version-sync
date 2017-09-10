@@ -24,3 +24,10 @@ fn test_readme_deps() {
 
 This test will ensure that the dependencies mentioned in your
 `README.md` file is kept in sync with your crate version.
+
+## License
+
+Textwrap can be distributed according to the [MIT license][mit].
+Contributions will be accepted under the same license.
+
+[mit]: LICENSE
