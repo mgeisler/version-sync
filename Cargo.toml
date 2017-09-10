@@ -2,6 +2,13 @@
 name = "check-versions"
 version = "0.1.0"
 authors = ["Martin Geisler <martin@geisler.net>"]
+description = """
+Simple crate for ensuring that version numbers in README files are
+updated when the crate version changes.
+"""
+documentation = "https://docs.rs/check-versions/"
+repository = "https://github.com/mgeisler/check-versions"
+readme = "README.md"
 license = "MIT"
 
 [dependencies]
