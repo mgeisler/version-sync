@@ -9,6 +9,8 @@ updated when the crate version changes.
 documentation = "https://docs.rs/check-versions/"
 repository = "https://github.com/mgeisler/check-versions"
 readme = "README.md"
+keywords = ["version"]
+categories = ["development-tools", "rust-patterns"]
 license = "MIT"
 
 [dependencies]
