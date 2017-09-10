@@ -214,6 +214,8 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 /// extern crate check_versions;
 ///
 /// #[test]
+/// # fn fake_hidden_test_case() {}
+/// # // The above function ensures test_readme_deps is compiled.
 /// fn test_readme_deps() {
 ///     assert_markdown_deps_updated!("README.md");
 /// }
