@@ -106,6 +106,7 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
         Ok(value) => {
             let version = value
                 .get("dependencies")
+                .or_else(|| value.get("dev-dependencies"))
                 .and_then(|deps| deps.get(pkg_name))
                 .and_then(|dep| dep.get("version").or_else(|| Some(dep)))
                 .and_then(|version| version.as_str());
@@ -363,6 +364,15 @@ mod tests {
         fn table() {
             let block = "[dependencies]\n\
                          foobar = { version = '1.5', default-features = false }";
+            let request = extract_version_request("foobar", block);
+            assert_eq!(request.unwrap().predicates,
+                       parse_request("1.5").unwrap().predicates);
+        }
+
+        #[test]
+        fn dev_dependencies() {
+            let block = "[dev-dependencies]\n\
+                         foobar = '1.5'";
             let request = extract_version_request("foobar", block);
             assert_eq!(request.unwrap().predicates,
                        parse_request("1.5").unwrap().predicates);
