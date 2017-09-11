@@ -24,7 +24,7 @@ fn test_readme_deps() {
 
 This test will ensure that the dependencies mentioned in your
 `README.md` file is kept in sync with your crate version:
-```sh
+```
 $ cargo test --test check-versions -- --nocapture
     Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
      Running target/debug/deps/check_versions-3b40b9d452dd9385
@@ -41,7 +41,7 @@ Here the `README.md` file still references version 0.1.0, while the
 version number in `Cargo.toml` has been changed to 0.2.0. The test
 fails and the code block with the error is shown:
 
-```sh
+```
 $ cargo test --test check-versions -- --nocapture
     Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
      Running target/debug/deps/check_versions-8fbc5f3b97f4ec3a
