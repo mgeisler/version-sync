@@ -25,6 +25,15 @@ fn test_readme_deps() {
 This test will ensure that the dependencies mentioned in your
 `README.md` file is kept in sync with your crate version.
 
+## Release History
+
+This is a changelog describing the most important changes per release.
+
+### Version 0.1.0 — September 10th, 2017
+
+First public release with support for finding outdated version numbers
+in `dependencies` and `dev-dependencies`.
+
 ## License
 
 Textwrap can be distributed according to the [MIT license][mit].
