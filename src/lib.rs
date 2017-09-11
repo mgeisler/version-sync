@@ -442,9 +442,14 @@ mod tests {
 
         #[test]
         fn bad_path() {
+            let no_such_file = if cfg!(unix) {
+                "No such file or directory (os error 2)"
+            } else {
+                "The system cannot find the file specified. (os error 2)"
+            };
+            let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
             assert_eq!(check_markdown_deps("no-such-file.md", "foobar", "1.2.3"),
-                       Err(String::from("could not read no-such-file.md: \
-                                         No such file or directory (os error 2)")));
+                       Err(errmsg));
         }
 
         #[test]

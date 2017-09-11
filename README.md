@@ -1,5 +1,8 @@
 # check-versions
 
+[![](https://travis-ci.org/mgeisler/check-versions.svg?branch=master)][travis-ci]
+[![](https://ci.appveyor.com/api/projects/status/hy8camtdx5iiq26l?svg=true)][appveyor]
+
 The `check-versions` crate is a simple crate that will help you
 remember to update the versions numbers in your `README.md` file.
 
@@ -80,4 +83,6 @@ in `dependencies` and `dev-dependencies`.
 Textwrap can be distributed according to the [MIT license][mit].
 Contributions will be accepted under the same license.
 
+[travis-ci]: https://travis-ci.org/mgeisler/check-versions
+[appveyor]: https://ci.appveyor.com/project/mgeisler/check-versions
 [mit]: LICENSE
