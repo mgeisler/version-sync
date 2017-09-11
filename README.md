@@ -1,5 +1,7 @@
 # check-versions
 
+[![](https://img.shields.io/crates/v/check-versions.svg)][crates-io]
+[![](https://docs.rs/check-versions/badge.svg)][api-docs]
 [![](https://travis-ci.org/mgeisler/check-versions.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/hy8camtdx5iiq26l?svg=true)][appveyor]
 
@@ -83,6 +85,8 @@ in `dependencies` and `dev-dependencies`.
 Textwrap can be distributed according to the [MIT license][mit].
 Contributions will be accepted under the same license.
 
+[crates-io]: https://crates.io/crates/check-versions
+[api-docs]: https://docs.rs/check-versions/
 [travis-ci]: https://travis-ci.org/mgeisler/check-versions
 [appveyor]: https://ci.appveyor.com/project/mgeisler/check-versions
 [mit]: LICENSE
