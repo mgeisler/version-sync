@@ -359,6 +359,59 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     Ok(())
 }
 
+/// Assert that `html_root_url` is up to date.
+///
+/// Library code is [expected to set `html_root_url`][api-guidelines]
+/// to point to docs.rs so that rustdoc can generate correct links
+/// when referring to this crate.
+///
+/// The macro will call [`check_html_root_url`] on the file name given
+/// in order to check that the `html_root_url` is points to the
+/// current version of your package documentation on docs.rs. The
+/// package name is automatically taken from the `$CARGO_PKG_NAME`
+/// environment variable and the version is taken from
+/// `$CARGO_PKG_VERSION`. These environment variables are
+/// automatically set by Cargo when compiling your crate.
+///
+/// # Usage
+///
+/// The typical way to use this macro is from an integration test:
+///
+/// ```rust,no_run
+/// #[macro_use]
+/// extern crate version_sync;
+///
+/// #[test]
+/// # fn fake_hidden_test_case() {}
+/// # // The above function ensures test_html_root_url is compiled.
+/// fn test_html_root_url() {
+///     assert_html_root_url_updated!("src/lib.rs");
+/// }
+///
+/// # fn main() {}
+/// ```
+///
+/// Tests are run with the current directory set to directory where
+/// your `Cargo.toml` file is, so this will find the `src/lib.rs`
+/// crate root.
+///
+/// # Panics
+///
+/// If the `html_root_url` fails the check, `panic!` will be invoked.
+///
+/// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
+/// [`check_html_root_url`]: fn.check_html_root_url.html
+#[macro_export]
+macro_rules! assert_html_root_url_updated {
+    ($path:expr) => {
+        let pkg_name = env!("CARGO_PKG_NAME");
+        let pkg_version = env!("CARGO_PKG_VERSION");
+        if let Err(err) = $crate::check_html_root_url($path, pkg_name, pkg_version) {
+            panic!(err);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
