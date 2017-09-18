@@ -1,12 +1,17 @@
-# version-sync
+# Keep your Version Numbers in Sync with Cargo.toml
 
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/jvvihnnct0pubudv?svg=true)][appveyor]
 
-The `version-sync` crate is a simple crate that will help you
-remember to update the versions numbers in your `README.md` file.
+The `version-sync` crate will help you keep your version numbers in
+sync with the crate version defined in `Cargo.toml`.
+
+Rust projects typically reference this version number in several
+places, such as the `README.md` file. The `version-sync` crate makes
+it easy to add an integration test that checks that `README.md` is
+updated when the crate version changes.
 
 ## Usage
 
