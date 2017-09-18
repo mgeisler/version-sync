@@ -1,3 +1,5 @@
+#![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
+
 extern crate pulldown_cmark;
 extern crate semver_parser;
 extern crate syntex_syntax as syntax;
