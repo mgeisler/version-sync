@@ -1,12 +1,17 @@
-# version-sync
+# Keep your Version Numbers in Sync with Cargo.toml
 
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/jvvihnnct0pubudv?svg=true)][appveyor]
 
-The `version-sync` crate is a simple crate that will help you
-remember to update the versions numbers in your `README.md` file.
+The `version-sync` crate will help you keep your version numbers in
+sync with the crate version defined in `Cargo.toml`.
+
+Rust projects typically reference this version number in several
+places, such as the `README.md` file. The `version-sync` crate makes
+it easy to add an integration test that checks that `README.md` is
+updated when the crate version changes.
 
 ## Usage
 
@@ -16,7 +21,7 @@ Add this to your `Cargo.toml`:
 version-sync = "0.1"
 ```
 
-Then create a `tests/version-numbers.rs` with:
+Then create a `tests/version-numbers.rs` file with:
 ```rust
 #[macro_use]
 extern crate version_sync;
@@ -27,8 +32,10 @@ fn test_readme_deps() {
 }
 ```
 
-This test will ensure that the dependencies mentioned in your
-`README.md` file is kept in sync with your crate version:
+This integration test will ensure that the dependencies mentioned in
+your `README.md` file is kept in sync with your crate version. If
+everything is well, the test passes:
+
 ```
 $ cargo test --test version-numbers -- --nocapture
     Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
@@ -42,9 +49,10 @@ test test_readme_deps ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-Here the `README.md` file still references version 0.1.0, while the
-version number in `Cargo.toml` has been changed to 0.2.0. The test
-fails and the code block with the error is shown:
+If the README is out of sync with the crate version, the test fails.
+In this example, the `README.md` file still references version 0.1.0,
+while the version number in `Cargo.toml` has been changed to 0.2.0.
+The test fails and the code block with the error is shown:
 
 ```
 $ cargo test --test version-numbers -- --nocapture
