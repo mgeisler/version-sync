@@ -78,6 +78,10 @@ error: test failed, to rerun pass '--test check-versions'
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.1.2 — September 18th, 2017
+
+Identical to version 0.1.1, but with better deprecation notices.
+
 ### Version 0.1.1 — September 18th, 2017
 
 The crate will be renamed to [`version-sync`][version-sync] and this
