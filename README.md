@@ -3,7 +3,7 @@
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
-[![](https://ci.appveyor.com/api/projects/status/hy8camtdx5iiq26l?svg=true)][appveyor]
+[![](https://ci.appveyor.com/api/projects/status/jvvihnnct0pubudv?svg=true)][appveyor]
 
 The `version-sync` crate is a simple crate that will help you
 remember to update the versions numbers in your `README.md` file.
