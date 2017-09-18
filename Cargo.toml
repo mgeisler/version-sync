@@ -12,6 +12,7 @@ readme = "README.md"
 keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
 license = "MIT"
+exclude = [".dir-locals.el"]
 
 [dependencies]
 pulldown-cmark = { version = "0.0.11", default-features = false }
