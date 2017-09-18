@@ -85,25 +85,10 @@ This is a changelog describing the most important changes per release.
 
 ### Version 0.1.3 — September 18th, 2017
 
-Idential to version 0.1.2, but release under the name `version-sync`.
-
-### Version 0.1.2 — September 18th, 2017
-
-Identical to version 0.1.1, but with better deprecation notices.
-
-### Version 0.1.1 — September 18th, 2017
-
-The crate will be renamed to [`version-sync`][version-sync] and this
-is the last release of the crate under the name `check-versions`.
-
-Version 0.1.1 is identical in functionality to version 0.1.0, except
-that using the crate will trigger a deprecation warning with
-instructions to use [`version-sync`][version-sync] instead.
-
-### Version 0.1.0 — September 10th, 2017
-
 First public release with support for finding outdated version numbers
 in `dependencies` and `dev-dependencies`.
+
+Versions 0.1.0 to 0.1.2 were released under the name `check-versions`.
 
 ## License
 
