@@ -75,6 +75,10 @@ error: test failed, to rerun pass '--test version-numbers'
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.1.3 — September 18th, 2017
+
+Idential to version 0.1.2, but release under the name `version-sync`.
+
 ### Version 0.1.2 — September 18th, 2017
 
 Identical to version 0.1.1, but with better deprecation notices.
