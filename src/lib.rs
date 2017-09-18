@@ -1,4 +1,3 @@
-#![deprecated(since = "0.1.1", note = "please use the `version-sync` crate instead")]
 extern crate pulldown_cmark;
 extern crate toml;
 extern crate semver_parser;
@@ -213,7 +212,7 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///
 /// ```rust,no_run
 /// #[macro_use]
-/// extern crate check_versions;
+/// extern crate version_sync;
 ///
 /// #[test]
 /// # fn fake_hidden_test_case() {}
