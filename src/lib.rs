@@ -173,8 +173,9 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
 ///
 /// # Errors
 ///
-/// If any block failed the check, an `Err` is returned that can be
-/// used to make a test fail or pass.
+/// If any block fails the check, an `Err` is returned with a succinct
+/// error message. Status information has then already been printed on
+/// `stdout`.
 pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
     let text = read_file(path)
         .map_err(|err| format!("could not read {}: {}", path, err))?;
