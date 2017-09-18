@@ -82,8 +82,8 @@ in `dependencies` and `dev-dependencies`.
 
 ## License
 
-Textwrap can be distributed according to the [MIT license][mit].
-Contributions will be accepted under the same license.
+The `check-versions` crate can be distributed according to the [MIT
+license][mit]. Contributions will be accepted under the same license.
 
 [crates-io]: https://crates.io/crates/check-versions
 [api-docs]: https://docs.rs/check-versions/
