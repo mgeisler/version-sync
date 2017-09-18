@@ -1,3 +1,4 @@
+#![deprecated(since = "0.1.1", note = "please use the `version-sync` crate instead")]
 extern crate pulldown_cmark;
 extern crate toml;
 extern crate semver_parser;
