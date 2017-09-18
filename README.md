@@ -75,6 +75,15 @@ error: test failed, to rerun pass '--test check-versions'
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.1.1 — September 18th, 2017
+
+The crate will be renamed to `version-sync` and this is the last
+release of the crate under the name `check-versions`.
+
+Version 0.1.1 is identical in functionality to version 0.1.0, except
+that using the crate will trigger a deprecation warning with
+instructions to use `version-sync` instead.
+
 ### Version 0.1.0 — September 10th, 2017
 
 First public release with support for finding outdated version numbers
