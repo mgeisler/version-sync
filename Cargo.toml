@@ -1,13 +1,13 @@
 [package]
-name = "check-versions"
-version = "0.1.0"
+name = "version-sync"
+version = "0.1.3"
 authors = ["Martin Geisler <martin@geisler.net>"]
 description = """
 Simple crate for ensuring that version numbers in README files are
 updated when the crate version changes.
 """
-documentation = "https://docs.rs/check-versions/"
-repository = "https://github.com/mgeisler/check-versions"
+documentation = "https://docs.rs/version-sync/"
+repository = "https://github.com/mgeisler/version-sync"
 readme = "README.md"
 keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
