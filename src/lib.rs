@@ -394,7 +394,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                         Ok(_) => println!("{} (line {}) ... ok", path, loc.line),
                         Err(err) => {
                             failed = true;
-                            println!("{} (line {}) ... {}", path, loc.line, err);
+                            println!("{} (line {}) ... {} in", path, loc.line, err);
                             if let Ok(snippet) = codemap.span_to_snippet(attr.span) {
                                 println!("{}\n", indent(&snippet));
                             }
