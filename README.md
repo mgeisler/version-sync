@@ -101,6 +101,12 @@ error: test failed
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.2.0 — September 19th, 2017
+
+Added `assert_html_root_url_updated!` which will check that the
+`html_root_url` attribute points to the correct version of the crate
+documentation on docs.rs.
+
 ### Version 0.1.3 — September 18th, 2017
 
 First public release with support for finding outdated version numbers
