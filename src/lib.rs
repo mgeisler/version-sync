@@ -1,3 +1,50 @@
+//! `version-sync` provides macros for keeping version numbers in sync
+//! with your crate version.
+//!
+//! When making a release of a Rust project, you typically need to
+//! adjust some version numbers in your code and documentation. This
+//! crate gives you macros that covers the two usual cases where
+//! version numbers need updating:
+//!
+//! * TOML examples in the `README.md` files that show how to add a
+//!   dependency on your crate. See [`assert_markdown_deps_updated`].
+//!
+//! * The [`html_root_url`] attribute that tells other crates where to
+//!   find your documentation. See [`assert_html_root_url_updated`].
+//!
+//! A typical configuration will use an integration test to verify
+//! that all version numbers are in sync. Create a
+//! `tests/version-numbers.rs` file with:
+//!
+//! ```rust
+//! #[macro_use]
+//! extern crate version_sync;
+//!
+//! #[test]
+//! # fn fake_hidden_test_case_1() {}
+//! fn test_readme_deps() {
+//!     assert_markdown_deps_updated!("README.md");
+//! }
+//!
+//! #[test]
+//! # fn fake_hidden_test_case_2() {}
+//! fn test_html_root_url() {
+//!     assert_html_root_url_updated!("src/lib.rs");
+//! }
+//!
+//! # fn main() {
+//! #     test_readme_deps();
+//! #     test_html_root_url();
+//! # }
+//! ```
+//!
+//! When you run `cargo test`, your version numbers will be
+//! automatically checked.
+//!
+//! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
+//! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
+//! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
+
 #![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
 
 extern crate pulldown_cmark;
@@ -217,7 +264,7 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///
 /// The typical way to use this macro is from an integration test:
 ///
-/// ```rust,no_run
+/// ```rust
 /// #[macro_use]
 /// extern crate version_sync;
 ///
@@ -228,7 +275,9 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///     assert_markdown_deps_updated!("README.md");
 /// }
 ///
-/// # fn main() {}
+/// # fn main() {
+/// #     test_readme_deps();
+/// # }
 /// ```
 ///
 /// Tests are run with the current directory set to directory where
@@ -301,9 +350,9 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 /// Check version numbers in `html_root_url` attributes.
 ///
 /// This function parses the Rust source file in `path` and looks for
-/// `doc` attributes that specify `html_root_url`. Such an attribute
-/// must specify a valid URL and if the URL points to docs.rs, it must
-/// be point to the documentation for `pkg_name` and `pkg_version`.
+/// `html_root_url` attributes. Such an attribute must specify a valid
+/// URL and if the URL points to docs.rs, it must be point to the
+/// documentation for `pkg_name` and `pkg_version`.
 ///
 /// # Errors
 ///
@@ -345,7 +394,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                         Ok(_) => println!("{} (line {}) ... ok", path, loc.line),
                         Err(err) => {
                             failed = true;
-                            println!("{} (line {}) ... {}", path, loc.line, err);
+                            println!("{} (line {}) ... {} in", path, loc.line, err);
                             if let Ok(snippet) = codemap.span_to_snippet(attr.span) {
                                 println!("{}\n", indent(&snippet));
                             }
@@ -362,7 +411,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     Ok(())
 }
 
-/// Assert that `html_root_url` is up to date.
+/// Assert that the `html_root_url` attribute is up to date.
 ///
 /// Library code is [expected to set `html_root_url`][api-guidelines]
 /// to point to docs.rs so that rustdoc can generate correct links
@@ -380,7 +429,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///
 /// The typical way to use this macro is from an integration test:
 ///
-/// ```rust,no_run
+/// ```rust
 /// #[macro_use]
 /// extern crate version_sync;
 ///
@@ -391,7 +440,9 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///     assert_html_root_url_updated!("src/lib.rs");
 /// }
 ///
-/// # fn main() {}
+/// # fn main() {
+/// #     test_html_root_url();
+/// # }
 /// ```
 ///
 /// Tests are run with the current directory set to directory where

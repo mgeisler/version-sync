@@ -30,53 +30,71 @@ extern crate version_sync;
 fn test_readme_deps() {
     assert_markdown_deps_updated!("README.md");
 }
+
+#[test]
+fn test_html_root_url() {
+    assert_html_root_url_updated!("src/lib.rs");
+}
 ```
 
 This integration test will ensure that the dependencies mentioned in
-your `README.md` file is kept in sync with your crate version. If
-everything is well, the test passes:
+your `README.md` file is kept in sync with your crate version and that
+your `html_root_url` points to the correct documentation on docs.rs.
+If everything is well, the test passes:
 
 ```
-$ cargo test --test version-numbers -- --nocapture
-    Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
-     Running target/debug/deps/version_numbers-3b40b9d452dd9385
+$ cargo test
+    Finished debug [unoptimized + debuginfo] target(s) in 0.0 secs
+     Running target/debug/deps/version_numbers-504f17c82f1defea
 
-running 1 test
-Checking code blocks in README.md...
-README.md (line 10) ... ok
+running 2 tests
 test test_readme_deps ... ok
+test test_html_root_url ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured
 ```
 
-If the README is out of sync with the crate version, the test fails.
-In this example, the `README.md` file still references version 0.1.0,
-while the version number in `Cargo.toml` has been changed to 0.2.0.
-The test fails and the code block with the error is shown:
+If the README or `html_root_url` is out of sync with the crate
+version, the tests fail. In this example, the version number in
+`Cargo.toml` has been changed to 0.2.0 while the `README.md` and
+`html_root_url` remain unchanged. The tests now fail and the
+problematic TOML code and attribute are shown:
 
 ```
-$ cargo test --test version-numbers -- --nocapture
-    Finished dev [unoptimized + debuginfo] target(s) in 0.0 secs
-     Running target/debug/deps/version_numbers-8fbc5f3b97f4ec3a
+$ cargo test
+    Finished debug [unoptimized + debuginfo] target(s) in 0.0 secs
+     Running target/debug/deps/version_numbers-f399bac3e468d035
 
-running 1 test
-Checking code blocks in README.md...
-README.md (line 10) ... expected minor version 2, found 1 in
+running 2 tests
+test test_readme_deps ... FAILED
+test test_html_root_url ... FAILED
+
+failures:
+
+---- test_readme_deps stdout ----
+	Checking code blocks in README.md...
+README.md (line 20) ... expected minor version 2, found 1 in
     [dev-dependencies]
     version-sync = "0.1"
 
-thread 'test_readme_deps' panicked at 'dependency errors in README.md', tests/version-numbers.rs:6:4
+thread 'test_readme_deps' panicked at 'dependency errors in README.md', tests/version-numbers.rs:6
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
-test test_readme_deps ... FAILED
+
+---- test_html_root_url stdout ----
+	Checking doc attributes in src/lib.rs...
+src/lib.rs (line 48) ... expected minor version 2, found 1 in
+    #![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
+
+thread 'test_html_root_url' panicked at 'html_root_url errors in src/lib.rs', tests/version-numbers.rs:11
+
 
 failures:
-
-failures:
+    test_html_root_url
     test_readme_deps
 
-test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured
 
-error: test failed, to rerun pass '--test version-numbers'
+error: test failed
 ```
 
 ## Release History
