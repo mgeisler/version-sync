@@ -1,3 +1,50 @@
+//! `version-sync` provides macros for keeping version numbers in sync
+//! with your crate version.
+//!
+//! When making a release of a Rust project, you typically need to
+//! adjust some version numbers in your code and documentation. This
+//! crate gives you macros that covers the two usual cases where
+//! version numbers need updating:
+//!
+//! * TOML examples in the `README.md` files that show how to add a
+//!   dependency on your crate. See [`assert_markdown_deps_updated`].
+//!
+//! * The [`html_root_url`] attribute that tells other crates where to
+//!   find your documentation. See [`assert_html_root_url_updated`].
+//!
+//! A typical configuration will use an integration test to verify
+//! that all version numbers are in sync. Create a
+//! `tests/version-numbers.rs` file with:
+//!
+//! ```rust
+//! #[macro_use]
+//! extern crate version_sync;
+//!
+//! #[test]
+//! # fn fake_hidden_test_case_1() {}
+//! fn test_readme_deps() {
+//!     assert_markdown_deps_updated!("README.md");
+//! }
+//!
+//! #[test]
+//! # fn fake_hidden_test_case_2() {}
+//! fn test_html_root_url() {
+//!     assert_html_root_url_updated!("src/lib.rs");
+//! }
+//!
+//! # fn main() {
+//! #     test_readme_deps();
+//! #     test_html_root_url();
+//! # }
+//! ```
+//!
+//! When you run `cargo test`, your version numbers will be
+//! automatically checked.
+//!
+//! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
+//! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
+//! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
+
 #![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
 
 extern crate pulldown_cmark;
