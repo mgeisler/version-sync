@@ -18,7 +18,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.1"
+version-sync = "0.2"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -100,6 +100,12 @@ error: test failed
 ## Release History
 
 This is a changelog describing the most important changes per release.
+
+### Version 0.2.0 — September 19th, 2017
+
+Added `assert_html_root_url_updated!` which will check that the
+`html_root_url` attribute points to the correct version of the crate
+documentation on docs.rs.
 
 ### Version 0.1.3 — September 18th, 2017
 
