@@ -264,7 +264,7 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///
 /// The typical way to use this macro is from an integration test:
 ///
-/// ```rust,no_run
+/// ```rust
 /// #[macro_use]
 /// extern crate version_sync;
 ///
@@ -275,7 +275,9 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///     assert_markdown_deps_updated!("README.md");
 /// }
 ///
-/// # fn main() {}
+/// # fn main() {
+/// #     test_readme_deps();
+/// # }
 /// ```
 ///
 /// Tests are run with the current directory set to directory where
@@ -427,7 +429,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///
 /// The typical way to use this macro is from an integration test:
 ///
-/// ```rust,no_run
+/// ```rust
 /// #[macro_use]
 /// extern crate version_sync;
 ///
@@ -438,7 +440,9 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 ///     assert_html_root_url_updated!("src/lib.rs");
 /// }
 ///
-/// # fn main() {}
+/// # fn main() {
+/// #     test_html_root_url();
+/// # }
 /// ```
 ///
 /// Tests are run with the current directory set to directory where
