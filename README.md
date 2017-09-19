@@ -18,7 +18,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.1"
+version-sync = "0.2"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
