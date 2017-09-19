@@ -350,9 +350,9 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 /// Check version numbers in `html_root_url` attributes.
 ///
 /// This function parses the Rust source file in `path` and looks for
-/// `doc` attributes that specify `html_root_url`. Such an attribute
-/// must specify a valid URL and if the URL points to docs.rs, it must
-/// be point to the documentation for `pkg_name` and `pkg_version`.
+/// `html_root_url` attributes. Such an attribute must specify a valid
+/// URL and if the URL points to docs.rs, it must be point to the
+/// documentation for `pkg_name` and `pkg_version`.
 ///
 /// # Errors
 ///
@@ -411,7 +411,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     Ok(())
 }
 
-/// Assert that `html_root_url` is up to date.
+/// Assert that the `html_root_url` attribute is up to date.
 ///
 /// Library code is [expected to set `html_root_url`][api-guidelines]
 /// to point to docs.rs so that rustdoc can generate correct links
