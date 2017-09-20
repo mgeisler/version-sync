@@ -101,7 +101,7 @@ error: test failed
 
 This is a changelog describing the most important changes per release.
 
-### Version 0.2.0 — September 19th, 2017
+### Version 0.2.0 — September 20th, 2017
 
 Added `assert_html_root_url_updated!` which will check that the
 `html_root_url` attribute points to the correct version of the crate
