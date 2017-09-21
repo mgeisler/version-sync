@@ -179,8 +179,15 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
 fn is_toml_block(lang: &str) -> bool {
     // Split the language line as LangString::parse from rustdoc:
     // https://github.com/rust-lang/rust/blob/1.20.0/src/librustdoc/html/markdown.rs#L922
-    lang.split(|c: char| !(c == '_' || c == '-' || c.is_alphanumeric()))
-        .any(|token| token.trim() == "toml")
+    let mut has_toml = false;
+    for token in lang.split(|c: char| !(c == '_' || c == '-' || c.is_alphanumeric())) {
+        match token.trim() {
+            "no_sync" => return false,
+            "toml" => has_toml = true,
+            _ => {}
+        }
+    }
+    has_toml
 }
 
 /// Find all TOML code blocks in a Markdown text.
@@ -485,12 +492,18 @@ mod tests {
 
     #[test]
     fn is_toml_block_simple() {
-        assert!(!is_toml_block("rust"))
+        assert!(!is_toml_block("rust"));
     }
 
     #[test]
     fn is_toml_block_comma() {
-        assert!(is_toml_block("foo,toml"))
+        assert!(is_toml_block("foo,toml"));
+    }
+
+    #[test]
+    fn is_toml_block_no_sync() {
+        assert!(!is_toml_block("toml,no_sync"));
+        assert!(!is_toml_block("toml, no_sync"));
     }
 
     mod test_version_matches_request {
