@@ -492,12 +492,12 @@ mod tests {
 
     #[test]
     fn is_toml_block_simple() {
-        assert!(!is_toml_block("rust"))
+        assert!(!is_toml_block("rust"));
     }
 
     #[test]
     fn is_toml_block_comma() {
-        assert!(is_toml_block("foo,toml"))
+        assert!(is_toml_block("foo,toml"));
     }
 
     #[test]
