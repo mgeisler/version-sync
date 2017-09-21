@@ -101,6 +101,19 @@ error: test failed
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+When checking dependencies in READMEs, TOML blocks can now be excluded
+from the check by adding `no_sync` to the language line:
+
+    ```toml,no_sync
+    [dependencies]
+    your_crate = "0.1"
+    ```
+
+This TOML block will not be checked. This is similar to `no_run` for
+Rust code blocks.
+
 ### Version 0.2.0 — September 20th, 2017
 
 Added `assert_html_root_url_updated!` which will check that the
