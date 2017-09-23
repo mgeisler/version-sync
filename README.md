@@ -18,7 +18,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.2"
+version-sync = "0.3"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -113,7 +113,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.3.0 — September 23rd, 2017
 
 When checking dependencies in READMEs, TOML blocks can now be excluded
 from the check by adding `no_sync` to the language line:
