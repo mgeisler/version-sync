@@ -223,7 +223,30 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
 /// dependencies on `pkg_name` in those blocks. A code block fails the
 /// check if it has a dependency on `pkg_name` that doesn't match
 /// `pkg_version`, or if it has no dependency on `pkg_name` at all.
-/// Code blocks also fails the check if they cannot be parsed as TOML.
+///
+/// # Examples
+///
+/// Consider a package named `foo` with version 1.2.3. The following
+/// TOML block will pass the test:
+///
+/// ~~~markdown
+/// ```toml
+/// [dependencies]
+/// foo = "1.2.3"
+/// ```
+/// ~~~
+///
+/// Both `dependencies` and `dev-dependencies` are examined. If you
+/// want to skip a block, add `no_sync` to the language line:
+///
+/// ~~~markdown
+/// ```toml,no_sync
+/// [dependencies]
+/// foo = "1.2.3"
+/// ```
+/// ~~~
+///
+/// Code blocks also fail the check if they cannot be parsed as TOML.
 ///
 /// # Errors
 ///
