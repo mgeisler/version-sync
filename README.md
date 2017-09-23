@@ -97,6 +97,16 @@ test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured
 error: test failed
 ```
 
+### Excluding TOML Code
+
+You can add `no_sync` to the language line in a code block to exclude
+it from the checks done by `assert_markdown_deps_updated!`:
+
+    ```toml,no_sync
+    [dependencies]
+    your_crate = "0.1.2"
+    ```
+
 ## Release History
 
 This is a changelog describing the most important changes per release.
