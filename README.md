@@ -102,10 +102,12 @@ error: test failed
 You can add `no_sync` to the language line in a code block to exclude
 it from the checks done by `assert_markdown_deps_updated!`:
 
-    ```toml,no_sync
-    [dependencies]
-    your_crate = "0.1.2"
-    ```
+~~~markdown
+```toml,no_sync
+[dependencies]
+your_crate = "0.1.2"
+```
+~~~
 
 ## Release History
 
@@ -116,10 +118,12 @@ This is a changelog describing the most important changes per release.
 When checking dependencies in READMEs, TOML blocks can now be excluded
 from the check by adding `no_sync` to the language line:
 
-    ```toml,no_sync
-    [dependencies]
-    your_crate = "0.1"
-    ```
+~~~markdown
+```toml,no_sync
+[dependencies]
+your_crate = "0.1"
+```
+~~~
 
 This TOML block will not be checked. This is similar to `no_run` for
 Rust code blocks.
