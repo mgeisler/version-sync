@@ -48,6 +48,7 @@
 #![doc(html_root_url = "https://docs.rs/version-sync/0.3.0")]
 #![deny(missing_docs)]
 
+extern crate itertools;
 extern crate pulldown_cmark;
 extern crate semver_parser;
 extern crate syntex_syntax as syntax;
@@ -66,6 +67,7 @@ use semver_parser::version::parse as parse_version;
 use syntax::parse::{ParseSess, parse_crate_attrs_from_source_str};
 use toml::Value;
 use url::Url;
+use itertools::join;
 
 /// The common result type, our errors will be simple strings.
 type Result<T> = result::Result<T, String>;
@@ -146,6 +148,11 @@ fn version_matches_request(version: &Version, request: &VersionReq) -> Result<()
                                        version.patch,
                                        patch));
                 }
+            }
+            if pred.pre != version.pre {
+                return Err(format!("expected pre-release {:?}, found {:?}",
+                                   join(&version.pre, "."),
+                                   join(&pred.pre, ".")));
             }
         }
         _ => return Ok(()), // We cannot check other operators.
@@ -604,6 +611,14 @@ mod tests {
             let request = parse_request("1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request),
                        Err(String::from("expected patch version 4, found 3")));
+        }
+
+        #[test]
+        fn bad_pre_release() {
+            let version = parse_version("1.2.3-rc2").unwrap();
+            let request = parse_request("1.2.3-rc1").unwrap();
+            assert_eq!(version_matches_request(&version, &request),
+                       Err(String::from("expected pre-release \"rc2\", found \"rc1\"")));
         }
     }
 

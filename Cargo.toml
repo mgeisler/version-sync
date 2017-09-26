@@ -23,3 +23,4 @@ url = "1.5.1"
 # unicode-bidi is an indirect dependency and version 0.3.4 is not
 # compatible with Rust 1.15.0:
 unicode-bidi = "0.3.1, < 0.3.4"
+itertools = "0.6.3"
