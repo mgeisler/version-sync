@@ -112,10 +112,7 @@ fn read_file(path: &str) -> std::io::Result<String> {
 
 /// Indent every line in text by four spaces.
 fn indent(text: &str) -> String {
-    text.lines()
-        .map(|line| String::from("    ") + line)
-        .collect::<Vec<_>>()
-        .join("\n")
+    join(text.lines().map(|line| String::from("    ") + line), "\n")
 }
 
 /// Verify that the version range request matches the given version.
