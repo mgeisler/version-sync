@@ -1,6 +1,6 @@
 [package]
 name = "version-sync"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Martin Geisler <martin@geisler.net>"]
 description = """
 Simple crate for ensuring that version numbers in README files are
