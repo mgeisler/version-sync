@@ -113,6 +113,12 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+Issues closed:
+
+* [#19][issue-19]: Pre-release identifiers were ignored.
+
 ### Version 0.3.0 — September 23rd, 2017
 
 When checking dependencies in READMEs, TOML blocks can now be excluded
@@ -151,3 +157,4 @@ Contributions will be accepted under the same license.
 [travis-ci]: https://travis-ci.org/mgeisler/version-sync
 [appveyor]: https://ci.appveyor.com/project/mgeisler/version-sync
 [mit]: LICENSE
+[issue-19]: https://github.com/mgeisler/version-sync/issues/19
