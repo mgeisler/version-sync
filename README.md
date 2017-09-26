@@ -113,7 +113,10 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.3.1 — September 23rd, 2017
+
+This release fixes a small problem with the handling of pre-release
+identifiers.
 
 Issues closed:
 
