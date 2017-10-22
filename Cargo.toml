@@ -17,7 +17,7 @@ exclude = [".dir-locals.el"]
 [dependencies]
 pulldown-cmark = { version = "0.0.11", default-features = false }
 semver-parser = "0.7"
-syntex_syntax = "0.58.0"
+syn = { version = "0.11", features = ["full"] }
 toml = "0.4"
 url = "1.5.1"
 # unicode-bidi is an indirect dependency and version 0.3.4 is not
