@@ -433,7 +433,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 
                     match check_result {
                         Ok(()) => {
-                            // FIXME
+                            // FIXME: re-add line numbers and position in line when `syn` will have
+                            // enough capabilities to do so
                             println!("{} ... ok", path);
                             return Ok(());
                         },
