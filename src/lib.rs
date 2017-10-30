@@ -2,15 +2,11 @@
 //! with your crate version.
 //!
 //! When making a release of a Rust project, you typically need to
-//! adjust some version numbers in your code and documentation. This
-//! crate gives you macros that covers the two usual cases where
-//! version numbers need updating:
-//!
-//! * TOML examples in the `README.md` files that show how to add a
-//!   dependency on your crate. See [`assert_markdown_deps_updated`].
-//!
-//! * The [`html_root_url`] attribute that tells other crates where to
-//!   find your documentation. See [`assert_html_root_url_updated`].
+//! adjust some version numbers in your code and documentation. 
+//! If you have
+//! TOML examples in the `README.md` files showing how to add a
+//! dependency on your crate, you can use the
+//! [`assert_markdown_deps_updated`] macro to check them.
 //!
 //! A typical configuration will use an integration test to verify
 //! that all version numbers are in sync. Create a
@@ -26,34 +22,22 @@
 //!     assert_markdown_deps_updated!("README.md");
 //! }
 //!
-//! #[test]
-//! # fn fake_hidden_test_case_2() {}
-//! fn test_html_root_url() {
-//!     assert_html_root_url_updated!("src/lib.rs");
-//! }
-//!
 //! # fn main() {
 //! #     test_readme_deps();
-//! #     test_html_root_url();
 //! # }
 //! ```
 //!
 //! When you run `cargo test`, your version numbers will be
 //! automatically checked.
 //!
-//! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 //! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
-//! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
 
-#![doc(html_root_url = "https://docs.rs/version-sync/0.3.1")]
 #![deny(missing_docs)]
 
 extern crate itertools;
 extern crate pulldown_cmark;
 extern crate semver_parser;
-extern crate syntex_syntax as syntax;
 extern crate toml;
-extern crate url;
 
 use std::fs::File;
 use std::io::Read;
@@ -64,9 +48,7 @@ use semver_parser::range::parse as parse_request;
 use semver_parser::range::{VersionReq, Op};
 use semver_parser::version::Version;
 use semver_parser::version::parse as parse_version;
-use syntax::parse::{ParseSess, parse_crate_attrs_from_source_str};
 use toml::Value;
-use url::Url;
 use itertools::join;
 
 /// The common result type, our errors will be simple strings.
@@ -335,172 +317,6 @@ macro_rules! assert_markdown_deps_updated {
     }
 }
 
-fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
-    let url = Url::parse(value)
-        .map_err(|err| format!("parse error: {}", err))?;
-
-    // Since docs.rs redirects HTTP traffic to HTTPS, we will ensure
-    // that the scheme is "https" here.
-    if url.scheme() != "https" {
-        return Err(format!("expected \"https\", found {:?}", url.scheme()));
-    }
-
-    // We can only reason about docs.rs.
-    if url.domain() != Some("docs.rs") {
-        return Ok(());
-    }
-
-    let mut path_segments = url.path_segments()
-        .ok_or_else(|| String::from("no path in URL"))?;
-
-    // The package name should not be empty.
-    let name = path_segments
-        .next()
-        .and_then(|path| if path.is_empty() { None } else { Some(path) })
-        .ok_or_else(|| String::from("missing package name"))?;
-
-    // The version number should not be empty.
-    let request = path_segments
-        .next()
-        .and_then(|path| if path.is_empty() { None } else { Some(path) })
-        .ok_or_else(|| String::from("missing version number"))?;
-
-    // Finally, we check that the package name and version matches.
-    if name != pkg_name {
-        Err(format!("expected package \"{}\", found \"{}\"", pkg_name, name))
-    } else {
-        // The Rust API Guidelines[1] suggest using an exact version
-        // number, but we have relaxed this a little and allow the
-        // user to specify the version as just "1" or "1.2". We might
-        // make this more strict in the future.
-        //
-        // [1]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html
-        // #crate-sets-html_root_url-attribute-c-html-root
-        parse_request(request)
-            .map_err(|err| format!("could not parse version in URL: {}", err))
-            .and_then(|request| version_matches_request(version, &request))
-    }
-}
-
-/// Check version numbers in `html_root_url` attributes.
-///
-/// This function parses the Rust source file in `path` and looks for
-/// `html_root_url` attributes. Such an attribute must specify a valid
-/// URL and if the URL points to docs.rs, it must be point to the
-/// documentation for `pkg_name` and `pkg_version`.
-///
-/// # Errors
-///
-/// If any attribute fails the check, an `Err` is returned with a
-/// succinct error message. Status information has then already been
-/// printed on `stdout`.
-pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
-    let code = read_file(path)
-        .map_err(|err| format!("could not read {}: {}", path, err))?;
-    let version = parse_version(pkg_version)
-        .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
-
-    let session = ParseSess::new();
-    // The parse_crate_attrs_from_source_str function panics if the
-    // source code couldn't be parsed, so map_err is never called.
-    let attrs = parse_crate_attrs_from_source_str(path.to_owned(), code, &session)
-        .map_err(|err| format!("could not parse {}: {:?}", path, err))?;
-
-    println!("Checking doc attributes in {}...", path);
-    let mut failed = false;
-    for attr in attrs {
-        if !attr.check_name("doc") {
-            continue;
-        }
-        if let Some(meta_items) = attr.meta_item_list() {
-            for item in meta_items {
-                if let Some(name) = item.name() {
-                    if name != "html_root_url" {
-                        continue;
-                    }
-
-                    let codemap = session.codemap();
-                    let loc = codemap.lookup_char_pos(item.span.lo);
-                    let result =
-                        item.value_str()
-                            .ok_or(String::from("html_root_url attribute without URL"))
-                            .and_then(|url| url_matches(&url.as_str(), pkg_name, &version));
-                    match result {
-                        Ok(_) => println!("{} (line {}) ... ok", path, loc.line),
-                        Err(err) => {
-                            failed = true;
-                            println!("{} (line {}) ... {} in", path, loc.line, err);
-                            if let Ok(snippet) = codemap.span_to_snippet(attr.span) {
-                                println!("{}\n", indent(&snippet));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if failed {
-        return Err(format!("html_root_url errors in {}", path));
-    }
-    Ok(())
-}
-
-/// Assert that the `html_root_url` attribute is up to date.
-///
-/// Library code is [expected to set `html_root_url`][api-guidelines]
-/// to point to docs.rs so that rustdoc can generate correct links
-/// when referring to this crate.
-///
-/// The macro will call [`check_html_root_url`] on the file name given
-/// in order to check that the `html_root_url` is points to the
-/// current version of your package documentation on docs.rs. The
-/// package name is automatically taken from the `$CARGO_PKG_NAME`
-/// environment variable and the version is taken from
-/// `$CARGO_PKG_VERSION`. These environment variables are
-/// automatically set by Cargo when compiling your crate.
-///
-/// # Usage
-///
-/// The typical way to use this macro is from an integration test:
-///
-/// ```rust
-/// #[macro_use]
-/// extern crate version_sync;
-///
-/// #[test]
-/// # fn fake_hidden_test_case() {}
-/// # // The above function ensures test_html_root_url is compiled.
-/// fn test_html_root_url() {
-///     assert_html_root_url_updated!("src/lib.rs");
-/// }
-///
-/// # fn main() {
-/// #     test_html_root_url();
-/// # }
-/// ```
-///
-/// Tests are run with the current directory set to directory where
-/// your `Cargo.toml` file is, so this will find the `src/lib.rs`
-/// crate root.
-///
-/// # Panics
-///
-/// If the `html_root_url` fails the check, `panic!` will be invoked.
-///
-/// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
-/// [`check_html_root_url`]: fn.check_html_root_url.html
-#[macro_export]
-macro_rules! assert_html_root_url_updated {
-    ($path:expr) => {
-        let pkg_name = env!("CARGO_PKG_NAME");
-        let pkg_version = env!("CARGO_PKG_VERSION");
-        if let Err(err) = $crate::check_html_root_url($path, pkg_name, pkg_version) {
-            panic!(err);
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -708,106 +524,6 @@ mod tests {
         }
     }
 
-    mod test_url_matches {
-        use super::*;
-
-        #[test]
-        fn good_url() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3", "foo", &ver),
-                       Ok(()));
-        }
-
-        #[test]
-        fn trailing_slash() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3/", "foo", &ver),
-                       Ok(()));
-        }
-
-        #[test]
-        fn without_patch() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2", "foo", &ver), Ok(()));
-        }
-
-        #[test]
-        fn without_minor() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1", "foo", &ver), Ok(()));
-        }
-
-        #[test]
-        fn different_domain() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://example.net/foo/", "bar", &ver), Ok(()));
-        }
-
-        #[test]
-        fn http_url() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("http://docs.rs/foo/1.2.3", "foo", &ver),
-                       Err(String::from("expected \"https\", found \"http\"")));
-        }
-
-        #[test]
-        fn bad_scheme() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("mailto:foo@example.net", "foo", &ver),
-                       Err(String::from("expected \"https\", found \"mailto\"")));
-        }
-
-        #[test]
-        fn no_package() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs", "foo", &ver),
-                       Err(String::from("missing package name")));
-        }
-
-        #[test]
-        fn no_package_trailing_slash() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/", "foo", &ver),
-                       Err(String::from("missing package name")));
-        }
-
-        #[test]
-        fn no_version() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo", "foo", &ver),
-                       Err(String::from("missing version number")));
-        }
-
-        #[test]
-        fn no_version_trailing_slash() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/", "foo", &ver),
-                       Err(String::from("missing version number")));
-        }
-
-        #[test]
-        fn bad_url() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("docs.rs/foo/bar", "foo", &ver),
-                       Err(String::from("parse error: relative URL without a base")));
-        }
-
-        #[test]
-        fn bad_pkg_version() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.bad/", "foo", &ver),
-                       Err(String::from("could not parse version in URL: \
-                                         Extra junk after valid predicate: .bad")));
-        }
-
-        #[test]
-        fn wrong_pkg_name() {
-            let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3/", "bar", &ver),
-                       Err(String::from("expected package \"bar\", found \"foo\"")));
-        }
-    }
-
     mod test_check_markdown_deps {
         use super::*;
 
@@ -827,30 +543,6 @@ mod tests {
         fn bad_pkg_version() {
             // This uses the README.md file from this crate.
             assert_eq!(check_markdown_deps("README.md", "foobar", "1.2"),
-                       Err(String::from("bad package version \"1.2\": \
-                                         Expected dot")));
-        }
-    }
-
-    mod test_check_html_root_url {
-        use super::*;
-
-        #[test]
-        fn bad_path() {
-            let no_such_file = if cfg!(unix) {
-                "No such file or directory (os error 2)"
-            } else {
-                "The system cannot find the file specified. (os error 2)"
-            };
-            let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
-            assert_eq!(check_html_root_url("no-such-file.md", "foobar", "1.2.3"),
-                       Err(errmsg));
-        }
-
-        #[test]
-        fn bad_pkg_version() {
-            // This uses the src/lib.rs file from this crate.
-            assert_eq!(check_html_root_url("src/lib.rs", "foobar", "1.2"),
                        Err(String::from("bad package version \"1.2\": \
                                          Expected dot")));
         }
