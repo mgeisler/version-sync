@@ -82,7 +82,7 @@ note: Run with `RUST_BACKTRACE=1` for a backtrace.
 
 ---- test_html_root_url stdout ----
 	Checking doc attributes in src/lib.rs...
-src/lib.rs (line 48) ... expected minor version 2, found 1 in
+src/lib.rs ... expected minor version 2, found 1 in
     #![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
 
 thread 'test_html_root_url' panicked at 'html_root_url errors in src/lib.rs', tests/version-numbers.rs:11

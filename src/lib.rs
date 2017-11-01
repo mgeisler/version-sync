@@ -51,7 +51,7 @@
 extern crate itertools;
 extern crate pulldown_cmark;
 extern crate semver_parser;
-extern crate syntex_syntax as syntax;
+extern crate syn;
 extern crate toml;
 extern crate url;
 
@@ -64,7 +64,6 @@ use semver_parser::range::parse as parse_request;
 use semver_parser::range::{VersionReq, Op};
 use semver_parser::version::Version;
 use semver_parser::version::parse as parse_version;
-use syntax::parse::{ParseSess, parse_crate_attrs_from_source_str};
 use toml::Value;
 use url::Url;
 use itertools::join;
@@ -400,49 +399,56 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
 
-    let session = ParseSess::new();
-    // The parse_crate_attrs_from_source_str function panics if the
-    // source code couldn't be parsed, so map_err is never called.
-    let attrs = parse_crate_attrs_from_source_str(path.to_owned(), code, &session)
-        .map_err(|err| format!("could not parse {}: {:?}", path, err))?;
+    let krate = syn::parse_crate(&code)
+        .map_err(|source| format!("could not parse {} with source:\n{}", path, source))?;
 
     println!("Checking doc attributes in {}...", path);
-    let mut failed = false;
-    for attr in attrs {
-        if !attr.check_name("doc") {
-            continue;
-        }
-        if let Some(meta_items) = attr.meta_item_list() {
-            for item in meta_items {
-                if let Some(name) = item.name() {
-                    if name != "html_root_url" {
-                        continue;
-                    }
-
-                    let codemap = session.codemap();
-                    let loc = codemap.lookup_char_pos(item.span.lo);
-                    let result =
-                        item.value_str()
-                            .ok_or(String::from("html_root_url attribute without URL"))
-                            .and_then(|url| url_matches(&url.as_str(), pkg_name, &version));
-                    match result {
-                        Ok(_) => println!("{} (line {}) ... ok", path, loc.line),
-                        Err(err) => {
-                            failed = true;
-                            println!("{} (line {}) ... {} in", path, loc.line, err);
-                            if let Ok(snippet) = codemap.span_to_snippet(attr.span) {
-                                println!("{}\n", indent(&snippet));
+    for attr in krate.attrs {
+        match attr {
+            syn::Attribute {
+                style: syn::AttrStyle::Inner,
+                value: syn::MetaItem::List(ref ident, ref nested_meta_items),
+                is_sugared_doc: false,
+            } if ident.as_ref() == "doc" => {
+                for nested_meta_item in nested_meta_items {
+                    let check_result = match *nested_meta_item {
+                        syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name, ref value))
+                            if name == "html_root_url" =>
+                        {
+                            match *value {
+                                // accept both cooked and raw strings here
+                                syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
+                                // non-string html_root_url is probably an error, but we leave
+                                // this check to compiler
+                                _ => continue,
                             }
-                        }
+                        },
+                        syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
+                            if name == "html_root_url" =>
+                        {
+                            Err(String::from("html_root_url attribute without URL"))
+                        },
+                        _ => continue,
+                    };
+
+                    match check_result {
+                        Ok(()) => {
+                            // FIXME: re-add line numbers and position in line when `syn` will have
+                            // enough capabilities to do so
+                            println!("{} ... ok", path);
+                            return Ok(());
+                        },
+                        Err(err) => {
+                            println!("{} ... {}", path, err);
+                            return Err(format!("html_root_url errors in {}", path));
+                        },
                     }
                 }
-            }
+            },
+            _ => continue,
         }
     }
 
-    if failed {
-        return Err(format!("html_root_url errors in {}", path));
-    }
     Ok(())
 }
 
