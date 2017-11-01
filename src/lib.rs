@@ -399,8 +399,9 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
 
-    let krate = syn::parse_crate(&code)
-        .map_err(|source| format!("could not parse {} with source:\n{}", path, source))?;
+    let krate =
+        syn::parse_crate(&code)
+            .map_err(|source| format!("could not parse {} with source:\n{}", path, source))?;
 
     println!("Checking doc attributes in {}...", path);
     for attr in krate.attrs {
@@ -412,22 +413,22 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             } if ident.as_ref() == "doc" => {
                 for nested_meta_item in nested_meta_items {
                     let check_result = match *nested_meta_item {
-                        syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name, ref value))
-                            if name == "html_root_url" =>
-                        {
-                            match *value {
-                                // accept both cooked and raw strings here
-                                syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
-                                // non-string html_root_url is probably an error, but we leave
-                                // this check to compiler
-                                _ => continue,
+                        syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name,
+                                                                               ref value)) if name == "html_root_url" => {
+                            {
+                                match *value {
+                                    // accept both cooked and raw strings here
+                                    syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
+                                    // non-string html_root_url is probably an error, but we leave
+                                    // this check to compiler
+                                    _ => continue,
+                                }
                             }
-                        },
+                        }
                         syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
-                            if name == "html_root_url" =>
-                        {
+                            if name == "html_root_url" => {
                             Err(String::from("html_root_url attribute without URL"))
-                        },
+                        }
                         _ => continue,
                     };
 
@@ -437,14 +438,14 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                             // enough capabilities to do so
                             println!("{} ... ok", path);
                             return Ok(());
-                        },
+                        }
                         Err(err) => {
                             println!("{} ... {}", path, err);
                             return Err(format!("html_root_url errors in {}", path));
-                        },
+                        }
                     }
                 }
-            },
+            }
             _ => continue,
         }
     }
