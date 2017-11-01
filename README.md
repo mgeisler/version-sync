@@ -3,7 +3,7 @@
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
-[![](https://ci.appveyor.com/api/projects/status/jvvihnnct0pubudv?svg=true)][appveyor]
+[![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 
 The `version-sync` crate will help you keep your version numbers in
 sync with the crate version defined in `Cargo.toml`.
