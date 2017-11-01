@@ -427,10 +427,11 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             let check_result = match *meta_item {
                 syn::MetaItem::NameValue(ref name, ref value) if name == "html_root_url" => {
                     match *value {
-                        // accept both cooked and raw strings here
+                        // Accept both cooked and raw strings here.
                         syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
-                        // non-string html_root_url is probably an
-                        // error, but we leave this check to compiler
+                        // A non-string html_root_url is probably an
+                        // error, but we leave this check to the
+                        // compiler.
                         _ => continue,
                     }
                 }
@@ -443,8 +444,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             match check_result {
                 Ok(()) => {
                     // FIXME: re-add line numbers and position in line
-                    // when `syn` will have enough capabilities to do
-                    // so
+                    // when the syn crate have enough capabilities to
+                    // do so.
                     println!("{} ... ok", path);
                     return Ok(());
                 }
