@@ -419,9 +419,13 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         }
 
         for nested_meta_item in nested_meta_items {
-            let check_result = match *nested_meta_item {
-                syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name, ref value))
-                    if name == "html_root_url" => {
+            let meta_item = match *nested_meta_item {
+                syn::NestedMetaItem::MetaItem(ref meta_item) => meta_item,
+                _ => continue,
+            };
+
+            let check_result = match *meta_item {
+                syn::MetaItem::NameValue(ref name, ref value) if name == "html_root_url" => {
                     match *value {
                         // accept both cooked and raw strings here
                         syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
@@ -430,8 +434,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                         _ => continue,
                     }
                 }
-                syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
-                    if name == "html_root_url" => {
+                syn::MetaItem::Word(ref name) if name == "html_root_url" => {
                     Err(String::from("html_root_url attribute without URL"))
                 }
                 _ => continue,
