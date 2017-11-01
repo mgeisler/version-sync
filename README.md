@@ -18,7 +18,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.3"
+version-sync = "0.4"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -112,6 +112,16 @@ your_crate = "0.1.2"
 ## Release History
 
 This is a changelog describing the most important changes per release.
+
+### Version 0.4.0 — November 1st, 2017
+
+This release replaces the dependency on the abandoned `syntex_syntax`
+with with a dependency on the much lighter `syn` crate. This will
+improve compilation speed.
+
+Unfortunately, the `syn` crate does not provide us with information
+about line numbers, so the error messages are no longer as good. We
+might be able to work around that in a later version.
 
 ### Version 0.3.1 — September 26th, 2017
 
