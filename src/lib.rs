@@ -405,16 +405,21 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 
     println!("Checking doc attributes in {}...", path);
     for attr in krate.attrs {
-        match attr {
+        let (ident, nested_meta_items) = match attr {
             syn::Attribute {
                 style: syn::AttrStyle::Inner,
                 value: syn::MetaItem::List(ref ident, ref nested_meta_items),
                 is_sugared_doc: false,
-            } if ident.as_ref() == "doc" => {
-                for nested_meta_item in nested_meta_items {
-                    let check_result = match *nested_meta_item {
-                        syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name,
-                                                                               ref value)) if name == "html_root_url" => {
+            } => (ident, nested_meta_items),
+            _ => continue,
+        };
+
+        if ident.as_ref() == "doc" {
+            for nested_meta_item in nested_meta_items {
+                let check_result = match *nested_meta_item {
+                    syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name,
+                                                                           ref value)) if name == "html_root_url" => {
+                        {
                             {
                                 match *value {
                                     // accept both cooked and raw strings here
@@ -425,28 +430,27 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                                 }
                             }
                         }
-                        syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
-                            if name == "html_root_url" => {
-                            Err(String::from("html_root_url attribute without URL"))
-                        }
-                        _ => continue,
-                    };
+                    }
+                    syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
+                        if name == "html_root_url" => {
+                        Err(String::from("html_root_url attribute without URL"))
+                    }
+                    _ => continue,
+                };
 
-                    match check_result {
-                        Ok(()) => {
-                            // FIXME: re-add line numbers and position in line when `syn` will have
-                            // enough capabilities to do so
-                            println!("{} ... ok", path);
-                            return Ok(());
-                        }
-                        Err(err) => {
-                            println!("{} ... {}", path, err);
-                            return Err(format!("html_root_url errors in {}", path));
-                        }
+                match check_result {
+                    Ok(()) => {
+                        // FIXME: re-add line numbers and position in line when `syn` will have
+                        // enough capabilities to do so
+                        println!("{} ... ok", path);
+                        return Ok(());
+                    }
+                    Err(err) => {
+                        println!("{} ... {}", path, err);
+                        return Err(format!("html_root_url errors in {}", path));
                     }
                 }
             }
-            _ => continue,
         }
     }
 
