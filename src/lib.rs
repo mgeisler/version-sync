@@ -414,41 +414,40 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             _ => continue,
         };
 
-        if ident.as_ref() == "doc" {
-            for nested_meta_item in nested_meta_items {
-                let check_result = match *nested_meta_item {
-                    syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name,
-                                                                           ref value)) if name == "html_root_url" => {
-                        {
-                            {
-                                match *value {
-                                    // accept both cooked and raw strings here
-                                    syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
-                                    // non-string html_root_url is probably an error, but we leave
-                                    // this check to compiler
-                                    _ => continue,
-                                }
-                            }
-                        }
-                    }
-                    syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
-                        if name == "html_root_url" => {
-                        Err(String::from("html_root_url attribute without URL"))
-                    }
-                    _ => continue,
-                };
+        if ident.as_ref() != "doc" {
+            continue;
+        }
 
-                match check_result {
-                    Ok(()) => {
-                        // FIXME: re-add line numbers and position in line when `syn` will have
-                        // enough capabilities to do so
-                        println!("{} ... ok", path);
-                        return Ok(());
+        for nested_meta_item in nested_meta_items {
+            let check_result = match *nested_meta_item {
+                syn::NestedMetaItem::MetaItem(syn::MetaItem::NameValue(ref name, ref value))
+                    if name == "html_root_url" => {
+                    match *value {
+                        // accept both cooked and raw strings here
+                        syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
+                        // non-string html_root_url is probably an
+                        // error, but we leave this check to compiler
+                        _ => continue,
                     }
-                    Err(err) => {
-                        println!("{} ... {}", path, err);
-                        return Err(format!("html_root_url errors in {}", path));
-                    }
+                }
+                syn::NestedMetaItem::MetaItem(syn::MetaItem::Word(ref name))
+                    if name == "html_root_url" => {
+                    Err(String::from("html_root_url attribute without URL"))
+                }
+                _ => continue,
+            };
+
+            match check_result {
+                Ok(()) => {
+                    // FIXME: re-add line numbers and position in line
+                    // when `syn` will have enough capabilities to do
+                    // so
+                    println!("{} ... ok", path);
+                    return Ok(());
+                }
+                Err(err) => {
+                    println!("{} ... {}", path, err);
+                    return Err(format!("html_root_url errors in {}", path));
                 }
             }
         }
