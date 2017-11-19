@@ -398,10 +398,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         .map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
-
-    let krate =
-        syn::parse_crate(&code)
-            .map_err(|source| format!("could not parse {} with source:\n{}", path, source))?;
+    let krate = syn::parse_crate(&code)
+        .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
 
     println!("Checking doc attributes in {}...", path);
     for attr in krate.attrs {
