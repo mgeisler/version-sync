@@ -45,7 +45,7 @@
 //! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
 //! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
 
-#![doc(html_root_url = "https://docs.rs/version-sync/0.4.0")]
+#![doc(html_root_url = "https://docs.rs/version-sync/0.5.0")]
 #![deny(missing_docs)]
 
 extern crate itertools;
