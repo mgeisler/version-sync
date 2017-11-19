@@ -121,12 +121,10 @@ avoid pinning our dependencies at old versions.
 ### Version 0.4.0 — November 1st, 2017
 
 This release replaces the dependency on the abandoned `syntex_syntax`
-with with a dependency on the much lighter `syn` crate. This will
-improve compilation speed.
-
-Unfortunately, the `syn` crate does not provide us with information
-about line numbers, so the error messages are no longer as good. We
-might be able to work around that in a later version.
+with with a dependency on the much lighter `syn` crate. This improves
+compilation speed. Unfortunately, the `syn` crate does not provide
+information about line numbers, so error messages are are no longer as
+good. We might be able to work around that in a later version.
 
 ### Version 0.3.1 — September 26th, 2017
 
