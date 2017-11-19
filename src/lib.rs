@@ -338,15 +338,15 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
     let url = Url::parse(value)
         .map_err(|err| format!("parse error: {}", err))?;
 
+    // We can only reason about docs.rs.
+    if url.domain().is_some() && url.domain() != Some("docs.rs") {
+        return Ok(());
+    }
+
     // Since docs.rs redirects HTTP traffic to HTTPS, we will ensure
     // that the scheme is "https" here.
     if url.scheme() != "https" {
         return Err(format!("expected \"https\", found {:?}", url.scheme()));
-    }
-
-    // We can only reason about docs.rs.
-    if url.domain() != Some("docs.rs") {
-        return Ok(());
     }
 
     let mut path_segments = url.path_segments()
@@ -755,6 +755,13 @@ mod tests {
         fn different_domain() {
             let ver = parse_version("1.2.3").unwrap();
             assert_eq!(url_matches("https://example.net/foo/", "bar", &ver), Ok(()));
+        }
+
+        #[test]
+        fn different_domain_http() {
+            let ver = parse_version("1.2.3").unwrap();
+            assert_eq!(url_matches("http://example.net/foo/1.2.3", "foo", &ver),
+                       Ok(()));
         }
 
         #[test]
