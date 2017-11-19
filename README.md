@@ -113,6 +113,11 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+Bumped oldest supported Rust version from 1.15 to 1.17 in order to
+avoid pinning our dependencies at old versions.
+
 ### Version 0.4.0 — November 1st, 2017
 
 This release replaces the dependency on the abandoned `syntex_syntax`
