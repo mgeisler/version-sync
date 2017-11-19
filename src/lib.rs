@@ -398,10 +398,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         .map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
-
-    let krate =
-        syn::parse_crate(&code)
-            .map_err(|source| format!("could not parse {} with source:\n{}", path, source))?;
+    let krate = syn::parse_crate(&code)
+        .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
 
     println!("Checking doc attributes in {}...", path);
     for attr in krate.attrs {
@@ -441,16 +439,25 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                 _ => continue,
             };
 
+            // FIXME: use line number from the syn crate when it
+            // preserves span information. Here we simply find the
+            // first source line that contains "html_root_url".
+            //
+            // We know such a line must exist since we would have
+            // continue the loop above if it wasn't present.
+            let (line_no, source_line) = code.lines()
+                .enumerate()
+                .find(|&(_, line)| line.contains("html_root_url"))
+                .expect("html_root_url attribute not present");
+
             match check_result {
                 Ok(()) => {
-                    // FIXME: re-add line numbers and position in line
-                    // when the syn crate have enough capabilities to
-                    // do so.
-                    println!("{} ... ok", path);
+                    println!("{} (line {}) ... ok", path, line_no + 1);
                     return Ok(());
                 }
                 Err(err) => {
-                    println!("{} ... {}", path, err);
+                    println!("{} (line {}) ... {} in", path, line_no + 1, err);
+                    println!("{}\n", indent(source_line));
                     return Err(format!("html_root_url errors in {}", path));
                 }
             }
