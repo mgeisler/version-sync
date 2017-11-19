@@ -18,7 +18,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.4"
+version-sync = "0.5"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -113,20 +113,22 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.5.0 — November 19th, 2017
 
-Bumped oldest supported Rust version from 1.15 to 1.17 in order to
-avoid pinning our dependencies at old versions.
+Dependencies were updated and `version-sync` now requires Rust version
+1.17 or later.
+
+Error messages from `assert_html_root_url_updated` now again include
+line numbers (based on a heuristic until the `syn` crate can provide
+the information).
 
 ### Version 0.4.0 — November 1st, 2017
 
 This release replaces the dependency on the abandoned `syntex_syntax`
-with with a dependency on the much lighter `syn` crate. This will
-improve compilation speed.
-
-Unfortunately, the `syn` crate does not provide us with information
-about line numbers, so the error messages are no longer as good. We
-might be able to work around that in a later version.
+with with a dependency on the much lighter `syn` crate. This improves
+compilation speed. Unfortunately, the `syn` crate does not provide
+information about line numbers, so error messages are are no longer as
+good. We might be able to work around that in a later version.
 
 ### Version 0.3.1 — September 26th, 2017
 
