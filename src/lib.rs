@@ -398,17 +398,19 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         .map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
-    let krate = syn::parse_crate(&code)
+    let krate: syn::File = syn::parse_str(&code)
         .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
 
     println!("Checking doc attributes in {}...", path);
     for attr in krate.attrs {
-        let (ident, nested_meta_items) = match attr {
-            syn::Attribute {
-                style: syn::AttrStyle::Inner,
-                value: syn::MetaItem::List(ref ident, ref nested_meta_items),
-                is_sugared_doc: false,
-            } => (ident, nested_meta_items),
+        if let syn::AttrStyle::Outer = attr.style {
+            continue;
+        }
+        if attr.is_sugared_doc {
+            continue;
+        }
+        let (ident, nested_meta_items) = match attr.interpret_meta() {
+            Some(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
             _ => continue,
         };
 
@@ -417,23 +419,23 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         }
 
         for nested_meta_item in nested_meta_items {
-            let meta_item = match *nested_meta_item {
-                syn::NestedMetaItem::MetaItem(ref meta_item) => meta_item,
+            let meta_item = match nested_meta_item {
+                syn::NestedMeta::Meta(ref meta_item) => meta_item,
                 _ => continue,
             };
 
             let check_result = match *meta_item {
-                syn::MetaItem::NameValue(ref name, ref value) if name == "html_root_url" => {
-                    match *value {
+                syn::Meta::NameValue(syn::MetaNameValue { ref ident, ref lit, .. }) if ident == "html_root_url" => {
+                    match *lit {
                         // Accept both cooked and raw strings here.
-                        syn::Lit::Str(ref s, _) => url_matches(s, pkg_name, &version),
+                        syn::Lit::Str(ref s) => url_matches(&s.value(), pkg_name, &version),
                         // A non-string html_root_url is probably an
                         // error, but we leave this check to the
                         // compiler.
                         _ => continue,
                     }
                 }
-                syn::MetaItem::Word(ref name) if name == "html_root_url" => {
+                syn::Meta::Word(ref name) if name == "html_root_url" => {
                     Err(String::from("html_root_url attribute without URL"))
                 }
                 _ => continue,
