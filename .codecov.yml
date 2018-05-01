@@ -1,3 +1,10 @@
+codecov:
+  # Do not wait for these CI providers since they will not upload any
+  # coverage reports.
+  ci:
+    - !appveyor
+    - !travis
+
 coverage:
   status:
     project:
