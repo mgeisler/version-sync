@@ -11,12 +11,3 @@ cache: cargo
 matrix:
   allow_failures:
     - rust: nightly
-
-  include:
-    - rust: stable
-      sudo: required
-      cache: off
-      script:
-        - bash <(curl -s https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
-        - cargo tarpaulin --out Xml
-        - bash <(curl -s https://codecov.io/bash) -Z -f cobertura.xml
