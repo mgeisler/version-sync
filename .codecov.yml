@@ -1,0 +1,6 @@
+coverage:
+  status:
+    project:
+      default:
+        # Allow a 5% drop in overall project coverage on a PR.
+        threshold: 5%
