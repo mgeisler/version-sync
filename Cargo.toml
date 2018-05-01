@@ -17,6 +17,7 @@ exclude = [".dir-locals.el"]
 [badges]
 travis-ci = { repository = "mgeisler/version-sync" }
 appveyor = { repository = "mgeisler/version-sync" }
+codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
 pulldown-cmark = { version = "0.1", default-features = false }
