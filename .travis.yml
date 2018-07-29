@@ -1,7 +1,7 @@
 language: rust
 
 rust:
-  - 1.17.0 # ~4 releases behind latest stable
+  - 1.21.0 # ~4 releases behind latest stable
   - stable
   - beta
   - nightly
