@@ -414,7 +414,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             _ => continue,
         };
 
-        if ident.as_ref() != "doc" {
+        if ident != "doc" {
             continue;
         }
 
