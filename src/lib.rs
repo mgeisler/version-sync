@@ -59,14 +59,14 @@ use std::fs::File;
 use std::io::Read;
 use std::result;
 
-use pulldown_cmark::{Parser, Event, Tag};
+use itertools::join;
+use pulldown_cmark::{Event, Parser, Tag};
 use semver_parser::range::parse as parse_request;
-use semver_parser::range::{VersionReq, Op};
-use semver_parser::version::Version;
+use semver_parser::range::{Op, VersionReq};
 use semver_parser::version::parse as parse_version;
+use semver_parser::version::Version;
 use toml::Value;
 use url::Url;
-use itertools::join;
 
 /// The common result type, our errors will be simple strings.
 type Result<T> = result::Result<T, String>;
@@ -127,28 +127,31 @@ fn version_matches_request(version: &Version, request: &VersionReq) -> Result<()
             if pred.major != version.major {
                 return Err(format!(
                     "expected major version {}, found {}",
-                    version.major,
-                    pred.major,
+                    version.major, pred.major,
                 ));
             }
             if let Some(minor) = pred.minor {
                 if minor != version.minor {
-                    return Err(format!("expected minor version {}, found {}",
-                                       version.minor,
-                                       minor));
+                    return Err(format!(
+                        "expected minor version {}, found {}",
+                        version.minor, minor
+                    ));
                 }
             }
             if let Some(patch) = pred.patch {
                 if patch != version.patch {
-                    return Err(format!("expected patch version {}, found {}",
-                                       version.patch,
-                                       patch));
+                    return Err(format!(
+                        "expected patch version {}, found {}",
+                        version.patch, patch
+                    ));
                 }
             }
             if pred.pre != version.pre {
-                return Err(format!("expected pre-release {:?}, found {:?}",
-                                   join(&version.pre, "."),
-                                   join(&pred.pre, ".")));
+                return Err(format!(
+                    "expected pre-release {:?}, found {:?}",
+                    join(&version.pre, "."),
+                    join(&pred.pre, ".")
+                ));
             }
         }
         _ => return Ok(()), // We cannot check other operators.
@@ -168,10 +171,8 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
                 .and_then(|dep| dep.get("version").or_else(|| Some(dep)))
                 .and_then(|version| version.as_str());
             match version {
-                Some(version) => {
-                    parse_request(version)
-                        .map_err(|err| format!("could not parse dependency: {}", err))
-                }
+                Some(version) => parse_request(version)
+                    .map_err(|err| format!("could not parse dependency: {}", err)),
                 None => Err(format!("no dependency on {}", pkg_name)),
             }
         }
@@ -258,8 +259,7 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
 /// error message. Status information has then already been printed on
 /// `stdout`.
 pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
-    let text = read_file(path)
-        .map_err(|err| format!("could not read {}: {}", path, err))?;
+    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
 
@@ -331,12 +331,11 @@ macro_rules! assert_markdown_deps_updated {
         if let Err(err) = $crate::check_markdown_deps($path, pkg_name, pkg_version) {
             panic!(err);
         }
-    }
+    };
 }
 
 fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
-    let url = Url::parse(value)
-        .map_err(|err| format!("parse error: {}", err))?;
+    let url = Url::parse(value).map_err(|err| format!("parse error: {}", err))?;
 
     // We can only reason about docs.rs.
     if url.domain().is_some() && url.domain() != Some("docs.rs") {
@@ -349,7 +348,8 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
         return Err(format!("expected \"https\", found {:?}", url.scheme()));
     }
 
-    let mut path_segments = url.path_segments()
+    let mut path_segments = url
+        .path_segments()
         .ok_or_else(|| String::from("no path in URL"))?;
 
     // The package name should not be empty.
@@ -366,7 +366,10 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 
     // Finally, we check that the package name and version matches.
     if name != pkg_name {
-        Err(format!("expected package \"{}\", found \"{}\"", pkg_name, name))
+        Err(format!(
+            "expected package \"{}\", found \"{}\"",
+            pkg_name, name
+        ))
     } else {
         // The Rust API Guidelines[1] suggest using an exact version
         // number, but we have relaxed this a little and allow the
@@ -394,8 +397,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 /// succinct error message. Status information has then already been
 /// printed on `stdout`.
 pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
-    let code = read_file(path)
-        .map_err(|err| format!("could not read {}: {}", path, err))?;
+    let code = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
     let krate: syn::File = syn::parse_str(&code)
@@ -425,7 +427,11 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             };
 
             let check_result = match *meta_item {
-                syn::Meta::NameValue(syn::MetaNameValue { ref ident, ref lit, .. }) if ident == "html_root_url" => {
+                syn::Meta::NameValue(syn::MetaNameValue {
+                    ref ident, ref lit, ..
+                })
+                    if ident == "html_root_url" =>
+                {
                     match *lit {
                         // Accept both cooked and raw strings here.
                         syn::Lit::Str(ref s) => url_matches(&s.value(), pkg_name, &version),
@@ -447,7 +453,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
             //
             // We know such a line must exist since we would have
             // continue the loop above if it wasn't present.
-            let (line_no, source_line) = code.lines()
+            let (line_no, source_line) = code
+                .lines()
                 .enumerate()
                 .find(|&(_, line)| line.contains("html_root_url"))
                 .expect("html_root_url attribute not present");
@@ -521,7 +528,7 @@ macro_rules! assert_html_root_url_updated {
         if let Err(err) = $crate::check_html_root_url($path, pkg_name, pkg_version) {
             panic!(err);
         }
-    }
+    };
 }
 
 #[cfg(test)]
@@ -537,8 +544,13 @@ mod tests {
                     Trailing text";
         let start = text.find("```\n").unwrap() + 4;
         let end = text.rfind("```\n").unwrap() + 4;
-        assert_eq!(CodeBlock::new(text, start, end),
-                   CodeBlock { content: "foo\n", first_line: 3 });
+        assert_eq!(
+            CodeBlock::new(text, start, end),
+            CodeBlock {
+                content: "foo\n",
+                first_line: 3
+            }
+        );
     }
 
     #[test]
@@ -613,32 +625,40 @@ mod tests {
         fn bad_major() {
             let version = parse_version("2.0.0").unwrap();
             let request = parse_request("1.2.3").unwrap();
-            assert_eq!(version_matches_request(&version, &request),
-                       Err(String::from("expected major version 2, found 1")));
+            assert_eq!(
+                version_matches_request(&version, &request),
+                Err(String::from("expected major version 2, found 1"))
+            );
         }
 
         #[test]
         fn bad_minor() {
             let version = parse_version("1.3.0").unwrap();
             let request = parse_request("1.2.3").unwrap();
-            assert_eq!(version_matches_request(&version, &request),
-                       Err(String::from("expected minor version 3, found 2")));
+            assert_eq!(
+                version_matches_request(&version, &request),
+                Err(String::from("expected minor version 3, found 2"))
+            );
         }
 
         #[test]
         fn bad_patch() {
             let version = parse_version("1.2.4").unwrap();
             let request = parse_request("1.2.3").unwrap();
-            assert_eq!(version_matches_request(&version, &request),
-                       Err(String::from("expected patch version 4, found 3")));
+            assert_eq!(
+                version_matches_request(&version, &request),
+                Err(String::from("expected patch version 4, found 3"))
+            );
         }
 
         #[test]
         fn bad_pre_release() {
             let version = parse_version("1.2.3-rc2").unwrap();
             let request = parse_request("1.2.3-rc1").unwrap();
-            assert_eq!(version_matches_request(&version, &request),
-                       Err(String::from("expected pre-release \"rc2\", found \"rc1\"")));
+            assert_eq!(
+                version_matches_request(&version, &request),
+                Err(String::from("expected pre-release \"rc2\", found \"rc1\""))
+            );
         }
     }
 
@@ -650,8 +670,10 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = '1.5'";
             let request = extract_version_request("foobar", block);
-            assert_eq!(request.unwrap().predicates,
-                       parse_request("1.5").unwrap().predicates);
+            assert_eq!(
+                request.unwrap().predicates,
+                parse_request("1.5").unwrap().predicates
+            );
         }
 
         #[test]
@@ -659,8 +681,10 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = { version = '1.5', default-features = false }";
             let request = extract_version_request("foobar", block);
-            assert_eq!(request.unwrap().predicates,
-                       parse_request("1.5").unwrap().predicates);
+            assert_eq!(
+                request.unwrap().predicates,
+                parse_request("1.5").unwrap().predicates
+            );
         }
 
         #[test]
@@ -668,8 +692,10 @@ mod tests {
             let block = "[dev-dependencies]\n\
                          foobar = '1.5'";
             let request = extract_version_request("foobar", block);
-            assert_eq!(request.unwrap().predicates,
-                       parse_request("1.5").unwrap().predicates);
+            assert_eq!(
+                request.unwrap().predicates,
+                parse_request("1.5").unwrap().predicates
+            );
         }
 
         #[test]
@@ -677,8 +703,11 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = '1.5.bad'";
             let request = extract_version_request("foobar", block);
-            assert_eq!(request.unwrap_err(),
-                       "could not parse dependency: Extra junk after valid predicate: .bad");
+            assert_eq!(
+                request.unwrap_err(),
+                "could not parse dependency: \
+                 Extra junk after valid predicate: .bad"
+            );
         }
 
         #[test]
@@ -700,8 +729,10 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = 1.5.8";
             let request = extract_version_request("foobar", block);
-            assert_eq!(request.unwrap_err(),
-                       "TOML parse error: expected newline, found a period at line 2");
+            assert_eq!(
+                request.unwrap_err(),
+                "TOML parse error: expected newline, found a period at line 2"
+            );
         }
     }
 
@@ -720,14 +751,24 @@ mod tests {
 
         #[test]
         fn single() {
-            assert_eq!(find_toml_blocks("```toml\n```"),
-                       vec![CodeBlock { content: "", first_line: 2 }]);
+            assert_eq!(
+                find_toml_blocks("```toml\n```"),
+                vec![CodeBlock {
+                    content: "",
+                    first_line: 2
+                }]
+            );
         }
 
         #[test]
         fn no_close_fence() {
-            assert_eq!(find_toml_blocks("```toml\n"),
-                       vec![CodeBlock { content: "", first_line: 2 }]);
+            assert_eq!(
+                find_toml_blocks("```toml\n"),
+                vec![CodeBlock {
+                    content: "",
+                    first_line: 2
+                }]
+            );
         }
     }
 
@@ -737,15 +778,19 @@ mod tests {
         #[test]
         fn good_url() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3", "foo", &ver),
-                       Ok(()));
+            assert_eq!(
+                url_matches("https://docs.rs/foo/1.2.3", "foo", &ver),
+                Ok(())
+            );
         }
 
         #[test]
         fn trailing_slash() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3/", "foo", &ver),
-                       Ok(()));
+            assert_eq!(
+                url_matches("https://docs.rs/foo/1.2.3/", "foo", &ver),
+                Ok(())
+            );
         }
 
         #[test]
@@ -769,72 +814,94 @@ mod tests {
         #[test]
         fn different_domain_http() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("http://example.net/foo/1.2.3", "foo", &ver),
-                       Ok(()));
+            assert_eq!(
+                url_matches("http://example.net/foo/1.2.3", "foo", &ver),
+                Ok(())
+            );
         }
 
         #[test]
         fn http_url() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("http://docs.rs/foo/1.2.3", "foo", &ver),
-                       Err(String::from("expected \"https\", found \"http\"")));
+            assert_eq!(
+                url_matches("http://docs.rs/foo/1.2.3", "foo", &ver),
+                Err(String::from("expected \"https\", found \"http\""))
+            );
         }
 
         #[test]
         fn bad_scheme() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("mailto:foo@example.net", "foo", &ver),
-                       Err(String::from("expected \"https\", found \"mailto\"")));
+            assert_eq!(
+                url_matches("mailto:foo@example.net", "foo", &ver),
+                Err(String::from("expected \"https\", found \"mailto\""))
+            );
         }
 
         #[test]
         fn no_package() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs", "foo", &ver),
-                       Err(String::from("missing package name")));
+            assert_eq!(
+                url_matches("https://docs.rs", "foo", &ver),
+                Err(String::from("missing package name"))
+            );
         }
 
         #[test]
         fn no_package_trailing_slash() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/", "foo", &ver),
-                       Err(String::from("missing package name")));
+            assert_eq!(
+                url_matches("https://docs.rs/", "foo", &ver),
+                Err(String::from("missing package name"))
+            );
         }
 
         #[test]
         fn no_version() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo", "foo", &ver),
-                       Err(String::from("missing version number")));
+            assert_eq!(
+                url_matches("https://docs.rs/foo", "foo", &ver),
+                Err(String::from("missing version number"))
+            );
         }
 
         #[test]
         fn no_version_trailing_slash() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/", "foo", &ver),
-                       Err(String::from("missing version number")));
+            assert_eq!(
+                url_matches("https://docs.rs/foo/", "foo", &ver),
+                Err(String::from("missing version number"))
+            );
         }
 
         #[test]
         fn bad_url() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("docs.rs/foo/bar", "foo", &ver),
-                       Err(String::from("parse error: relative URL without a base")));
+            assert_eq!(
+                url_matches("docs.rs/foo/bar", "foo", &ver),
+                Err(String::from("parse error: relative URL without a base"))
+            );
         }
 
         #[test]
         fn bad_pkg_version() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.bad/", "foo", &ver),
-                       Err(String::from("could not parse version in URL: \
-                                         Extra junk after valid predicate: .bad")));
+            assert_eq!(
+                url_matches("https://docs.rs/foo/1.2.bad/", "foo", &ver),
+                Err(String::from(
+                    "could not parse version in URL: \
+                     Extra junk after valid predicate: .bad",
+                ))
+            );
         }
 
         #[test]
         fn wrong_pkg_name() {
             let ver = parse_version("1.2.3").unwrap();
-            assert_eq!(url_matches("https://docs.rs/foo/1.2.3/", "bar", &ver),
-                       Err(String::from("expected package \"bar\", found \"foo\"")));
+            assert_eq!(
+                url_matches("https://docs.rs/foo/1.2.3/", "bar", &ver),
+                Err(String::from("expected package \"bar\", found \"foo\""))
+            );
         }
     }
 
@@ -849,16 +916,19 @@ mod tests {
                 "The system cannot find the file specified. (os error 2)"
             };
             let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
-            assert_eq!(check_markdown_deps("no-such-file.md", "foobar", "1.2.3"),
-                       Err(errmsg));
+            assert_eq!(
+                check_markdown_deps("no-such-file.md", "foobar", "1.2.3"),
+                Err(errmsg)
+            );
         }
 
         #[test]
         fn bad_pkg_version() {
             // This uses the README.md file from this crate.
-            assert_eq!(check_markdown_deps("README.md", "foobar", "1.2"),
-                       Err(String::from("bad package version \"1.2\": \
-                                         Expected dot")));
+            assert_eq!(
+                check_markdown_deps("README.md", "foobar", "1.2"),
+                Err(String::from("bad package version \"1.2\": Expected dot"))
+            );
         }
     }
 
@@ -873,16 +943,19 @@ mod tests {
                 "The system cannot find the file specified. (os error 2)"
             };
             let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
-            assert_eq!(check_html_root_url("no-such-file.md", "foobar", "1.2.3"),
-                       Err(errmsg));
+            assert_eq!(
+                check_html_root_url("no-such-file.md", "foobar", "1.2.3"),
+                Err(errmsg)
+            );
         }
 
         #[test]
         fn bad_pkg_version() {
             // This uses the src/lib.rs file from this crate.
-            assert_eq!(check_html_root_url("src/lib.rs", "foobar", "1.2"),
-                       Err(String::from("bad package version \"1.2\": \
-                                         Expected dot")));
+            assert_eq!(
+                check_html_root_url("src/lib.rs", "foobar", "1.2"),
+                Err(String::from("bad package version \"1.2\": Expected dot"))
+            );
         }
     }
 }
