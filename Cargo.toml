@@ -21,7 +21,7 @@ codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
 pulldown-cmark = { version = "0.1", default-features = false }
-semver-parser = "0.7"
+semver-parser = "0.9"
 syn = { version = "0.14", features = ["full"] }
 toml = "0.4"
 url = "1.5.1"
