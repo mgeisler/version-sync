@@ -408,9 +408,6 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         if let syn::AttrStyle::Outer = attr.style {
             continue;
         }
-        if attr.is_sugared_doc {
-            continue;
-        }
         let (ident, nested_meta_items) = match attr.interpret_meta() {
             Some(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
             _ => continue,
@@ -706,7 +703,7 @@ mod tests {
             assert_eq!(
                 request.unwrap_err(),
                 "could not parse dependency: \
-                 Extra junk after valid predicate: .bad"
+                 encountered unexpected token: AlphaNumeric(\"bad\")"
             );
         }
 
@@ -890,7 +887,7 @@ mod tests {
                 url_matches("https://docs.rs/foo/1.2.bad/", "foo", &ver),
                 Err(String::from(
                     "could not parse version in URL: \
-                     Extra junk after valid predicate: .bad",
+                     encountered unexpected token: AlphaNumeric(\"bad\")"
                 ))
             );
         }
@@ -927,7 +924,9 @@ mod tests {
             // This uses the README.md file from this crate.
             assert_eq!(
                 check_markdown_deps("README.md", "foobar", "1.2"),
-                Err(String::from("bad package version \"1.2\": Expected dot"))
+                Err(String::from(
+                    "bad package version \"1.2\": expected more input"
+                ))
             );
         }
     }
@@ -954,7 +953,9 @@ mod tests {
             // This uses the src/lib.rs file from this crate.
             assert_eq!(
                 check_html_root_url("src/lib.rs", "foobar", "1.2"),
-                Err(String::from("bad package version \"1.2\": Expected dot"))
+                Err(String::from(
+                    "bad package version \"1.2\": expected more input"
+                ))
             );
         }
     }
