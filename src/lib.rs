@@ -168,8 +168,15 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
                 .get("dependencies")
                 .or_else(|| value.get("dev-dependencies"))
                 .and_then(|deps| deps.get(pkg_name))
-                .and_then(|dep| dep.get("version").or_else(|| Some(dep)))
-                .and_then(|version| version.as_str());
+                .and_then(|dep| {
+                    dep.get("version")
+                        // pkg_name = { version = "1.2.3" }
+                        .and_then(|version| version.as_str())
+                        // pkg_name = { git = "..." }
+                        .or_else(|| dep.get("git").and(Some("*")))
+                        // pkg_name = "1.2.3"
+                        .or_else(|| dep.as_str())
+                });
             match version {
                 Some(version) => parse_request(version)
                     .map_err(|err| format!("could not parse dependency: {}", err)),
@@ -681,6 +688,19 @@ mod tests {
             assert_eq!(
                 request.unwrap().predicates,
                 parse_request("1.5").unwrap().predicates
+            );
+        }
+
+        #[test]
+        fn git_dependency() {
+            // Git dependencies are translated into a "*" dependency
+            // and are thus always accepted.
+            let block = "[dependencies]\n\
+                         foobar = { git = 'https://example.net/foobar.git' }";
+            let request = extract_version_request("foobar", block);
+            assert_eq!(
+                request.unwrap().predicates,
+                parse_request("*").unwrap().predicates
             );
         }
 
