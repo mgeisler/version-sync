@@ -114,6 +114,27 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+Dependencies were updated and `version-sync` now requires Rust version
+1.21 or later.
+
+Git dependencies are now always accepted, which means that blocks like
+
+~~~markdown
+```toml
+[dependencies]
+your_crate = { git = "..." }
+```
+~~~
+
+will work without you having to add `no_sync`.
+
+Issues closed:
+
+* [#42][issue-42]: Handle Git dependencies
+
+
 ### Version 0.5.0 — November 19th, 2017
 
 Dependencies were updated and `version-sync` now requires Rust version
@@ -180,3 +201,4 @@ Contributions will be accepted under the same license.
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
 [mit]: LICENSE
 [issue-19]: https://github.com/mgeisler/version-sync/issues/19
+[issue-42]: https://github.com/mgeisler/version-sync/issues/42
