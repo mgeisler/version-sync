@@ -12,6 +12,9 @@ install:
   - rustup-init.exe -y --default-toolchain %TOOLCHAIN%
   - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
 
+before_build:
+  - cargo update
+
 build_script:
   - cargo build --verbose
 
