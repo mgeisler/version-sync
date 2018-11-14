@@ -8,9 +8,12 @@ matrix:
     - TOOLCHAIN: nightly
 
 install:
-  - ps: Start-FileDownload 'https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe'
+  - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
   - rustup-init.exe -y --default-toolchain %TOOLCHAIN%
   - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
+
+before_build:
+  - cargo update
 
 build_script:
   - cargo build --verbose
