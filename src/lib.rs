@@ -674,10 +674,7 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = '1.5'";
             let request = extract_version_request("foobar", block);
-            assert_eq!(
-                request.unwrap().predicates,
-                parse_request("1.5").unwrap().predicates
-            );
+            assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
         }
 
         #[test]
@@ -685,10 +682,7 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = { version = '1.5', default-features = false }";
             let request = extract_version_request("foobar", block);
-            assert_eq!(
-                request.unwrap().predicates,
-                parse_request("1.5").unwrap().predicates
-            );
+            assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
         }
 
         #[test]
@@ -698,10 +692,7 @@ mod tests {
             let block = "[dependencies]\n\
                          foobar = { git = 'https://example.net/foobar.git' }";
             let request = extract_version_request("foobar", block);
-            assert_eq!(
-                request.unwrap().predicates,
-                parse_request("*").unwrap().predicates
-            );
+            assert_eq!(request.unwrap(), parse_request("*").unwrap());
         }
 
         #[test]
@@ -709,10 +700,7 @@ mod tests {
             let block = "[dev-dependencies]\n\
                          foobar = '1.5'";
             let request = extract_version_request("foobar", block);
-            assert_eq!(
-                request.unwrap().predicates,
-                parse_request("1.5").unwrap().predicates
-            );
+            assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
         }
 
         #[test]
