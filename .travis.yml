@@ -8,6 +8,9 @@ rust:
 
 cache: cargo
 
+before_script:
+  - cargo update
+
 matrix:
   allow_failures:
     - rust: nightly
