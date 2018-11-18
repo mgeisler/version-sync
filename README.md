@@ -116,9 +116,6 @@ This is a changelog describing the most important changes per release.
 
 ### Unreleased
 
-Dependencies were updated and `version-sync` now requires Rust version
-1.21 or later.
-
 Git dependencies are now always accepted, which means that blocks like
 
 ~~~markdown
@@ -133,12 +130,13 @@ will work without you having to add `no_sync`.
 Issues closed:
 
 * [#42][issue-42]: Handle Git dependencies
+* [#39][issue-39]: Version 0.5 requires Rust version 1.21.0
 
 
 ### Version 0.5.0 — November 19th, 2017
 
 Dependencies were updated and `version-sync` now requires Rust version
-1.17 or later.
+1.21 or later.
 
 Error messages from `assert_html_root_url_updated` now again include
 line numbers (based on a heuristic until the `syn` crate can provide
@@ -201,4 +199,5 @@ Contributions will be accepted under the same license.
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
 [mit]: LICENSE
 [issue-19]: https://github.com/mgeisler/version-sync/issues/19
+[issue-39]: https://github.com/mgeisler/version-sync/issues/39
 [issue-42]: https://github.com/mgeisler/version-sync/issues/42
