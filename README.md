@@ -116,6 +116,10 @@ This is a changelog describing the most important changes per release.
 
 ### Unreleased
 
+You can use `assert_contains_regex!` to grep files for the current
+version number. The search is done with a regular expression where
+`{version}` is replaced with the current version number.
+
 Git dependencies are now always accepted, which means that blocks like
 
 ~~~markdown
@@ -129,8 +133,9 @@ will work without you having to add `no_sync`.
 
 Issues closed:
 
-* [#42][issue-42]: Handle Git dependencies
+* [#17][issue-17]: Allow to check non-markdown sources
 * [#39][issue-39]: Version 0.5 requires Rust version 1.21.0
+* [#42][issue-42]: Handle Git dependencies
 
 
 ### Version 0.5.0 — November 19th, 2017
@@ -198,6 +203,7 @@ Contributions will be accepted under the same license.
 [appveyor]: https://ci.appveyor.com/project/mgeisler/version-sync
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
 [mit]: LICENSE
+[issue-17]: https://github.com/mgeisler/version-sync/issues/17
 [issue-19]: https://github.com/mgeisler/version-sync/issues/19
 [issue-39]: https://github.com/mgeisler/version-sync/issues/39
 [issue-42]: https://github.com/mgeisler/version-sync/issues/42
