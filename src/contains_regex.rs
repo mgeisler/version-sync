@@ -1,0 +1,102 @@
+use regex::Regex;
+
+use super::{read_file, Result};
+
+/// Check that `path` contain the regular expression given by
+/// `template`.
+///
+/// The placeholders `{name}` and `{version}` will be replaced with
+/// `pkg_name` and `pkg_version`, if they are present in `template`.
+/// It is okay if `template` do not contain these placeholders.
+///
+/// The matching is done in multi-line mode, which means that `^` in
+/// the regular expression will match the beginning of any line in the
+/// file, not just the very beginning of the file.
+///
+/// # Errors
+///
+/// If the regular expression cannot be found, an `Err` is returned
+/// with a succinct error message. Status information has then already
+/// been printed on `stdout`.
+pub fn check_contains_regex(
+    path: &str,
+    template: &str,
+    pkg_name: &str,
+    pkg_version: &str,
+) -> Result<()> {
+    // Expand the optional {name} and {version} placeholders in the
+    // template. This is almost like
+    //
+    //   format!(template, name = pkg_name, version = pkg_version)
+    //
+    // but allows the user to leave out unnecessary placeholders.
+    let orig_regex = template
+        .replace("{name}", pkg_name)
+        .replace("{version}", pkg_version);
+
+    // We start by constructing a Regex from the original string. This
+    // ensurs that any errors refer to the string the user passed
+    // instead of the string we use internally.
+    let re = match Regex::new(&orig_regex) {
+        Ok(_) => {
+            // We now know that the regex is valid, so we can enable
+            // multi-line mode by prepending "(?m)".
+            let regex = String::from("(?m)") + &orig_regex;
+            Regex::new(&regex).unwrap()
+        }
+        Err(err) => return Err(format!("could not parse template: {}", err)),
+    };
+    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+
+    println!("Searching for {:?} in {}...", orig_regex, path);
+    match re.find(&text) {
+        Some(m) => {
+            let line_no = text[..m.start()].lines().count();
+            println!("{} (line {}) ... ok", path, line_no + 1);
+            Ok(())
+        }
+        None => Err(format!("could not find {:?} in {}", orig_regex, path)),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bad_regex() {
+        // Check that the error from a bad pattern doesn't contain
+        // the (?m) prefix.
+        assert_eq!(
+            check_contains_regex("README.md", "Version {version} [ups", "foobar", "1.2.3"),
+            Err(String::from(
+                [
+                    "could not parse template: regex parse error:",
+                    "    Version 1.2.3 [ups",
+                    "                  ^",
+                    "error: unclosed character class"
+                ]
+                .join("\n")
+            ))
+        )
+    }
+
+    #[test]
+    fn not_found() {
+        assert_eq!(
+            check_contains_regex("README.md", "should not be found", "foobar", "1.2.3"),
+            Err(String::from(
+                "could not find \"should not be found\" in README.md"
+            ))
+        )
+    }
+
+    #[test]
+    fn good_pattern() {
+        assert_eq!(
+            check_contains_regex("README.md", "{name}", "version-sync", "1.2.3"),
+            Ok(())
+        )
+    }
+
+}
