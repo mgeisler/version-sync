@@ -19,7 +19,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.5"
+version-sync = "0.6"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -114,7 +114,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.6.0 — November 22nd, 2018
 
 You can use `assert_contains_regex!` to grep files for the current
 version number. The search is done with a regular expression where
