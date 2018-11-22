@@ -8,7 +8,7 @@ fn test_readme_deps() {
 
 #[test]
 fn test_readme_changelog() {
-    assert_contains_regex!("README.md", "^### Version {version}");
+    assert_contains_regex!("README.md", r"^### Version {version} — .* \d\d?.., 20\d\d$");
 }
 
 #[test]
