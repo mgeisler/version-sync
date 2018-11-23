@@ -4,7 +4,7 @@ use semver_parser::range::VersionReq;
 use semver_parser::version::parse as parse_version;
 use toml::Value;
 
-use super::{indent, read_file, version_matches_request, Result};
+use helpers::{indent, read_file, version_matches_request, Result};
 
 /// A fenced code block.
 #[derive(Debug, Clone, PartialEq, Eq)]

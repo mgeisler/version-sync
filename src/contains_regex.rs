@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use super::{read_file, Result};
+use helpers::{read_file, Result};
 
 /// Check that `path` contain the regular expression given by
 /// `template`.
