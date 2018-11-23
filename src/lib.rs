@@ -60,9 +60,13 @@ extern crate syn;
 extern crate toml;
 extern crate url;
 
+mod contains_regex;
 mod helpers;
-
+mod html_root_url;
 mod markdown_deps;
+
+pub use contains_regex::check_contains_regex;
+pub use html_root_url::check_html_root_url;
 pub use markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
@@ -114,9 +118,6 @@ macro_rules! assert_markdown_deps_updated {
         }
     };
 }
-
-mod html_root_url;
-pub use html_root_url::check_html_root_url;
 
 /// Assert that the `html_root_url` attribute is up to date.
 ///
@@ -172,9 +173,6 @@ macro_rules! assert_html_root_url_updated {
         }
     };
 }
-
-mod contains_regex;
-pub use contains_regex::check_contains_regex;
 
 /// Assert that versions numbers are up to date via a regex.
 ///
