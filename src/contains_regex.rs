@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::{escape, Regex};
 
 use helpers::{read_file, Result};
 
@@ -31,8 +31,8 @@ pub fn check_contains_regex(
     //
     // but allows the user to leave out unnecessary placeholders.
     let orig_regex = template
-        .replace("{name}", pkg_name)
-        .replace("{version}", pkg_version);
+        .replace("{name}", &escape(pkg_name))
+        .replace("{version}", &escape(pkg_version));
 
     // We start by constructing a Regex from the original string. This
     // ensurs that any errors refer to the string the user passed
@@ -48,14 +48,14 @@ pub fn check_contains_regex(
     };
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for {:?} in {}...", orig_regex, path);
+    println!("Searching for \"{}\" in {}...", orig_regex, path);
     match re.find(&text) {
         Some(m) => {
             let line_no = text[..m.start()].lines().count();
             println!("{} (line {}) ... ok", path, line_no + 1);
             Ok(())
         }
-        None => Err(format!("could not find {:?} in {}", orig_regex, path)),
+        None => Err(format!("could not find \"{}\" in {}", orig_regex, path)),
     }
 }
 
@@ -71,10 +71,10 @@ mod tests {
             check_contains_regex("README.md", "Version {version} [ups", "foobar", "1.2.3"),
             Err(String::from(
                 [
-                    "could not parse template: regex parse error:",
-                    "    Version 1.2.3 [ups",
-                    "                  ^",
-                    "error: unclosed character class"
+                    r"could not parse template: regex parse error:",
+                    r"    Version 1\.2\.3 [ups",
+                    r"                    ^",
+                    r"error: unclosed character class"
                 ]
                 .join("\n")
             ))
@@ -87,6 +87,25 @@ mod tests {
             check_contains_regex("README.md", "should not be found", "foobar", "1.2.3"),
             Err(String::from(
                 "could not find \"should not be found\" in README.md"
+            ))
+        )
+    }
+
+    #[test]
+    fn escaping() {
+        assert_eq!(
+            check_contains_regex(
+                "README.md",
+                "escaped: {name}-{version}, not escaped: foo*bar-1.2.3",
+                "foo*bar",
+                "1.2.3"
+            ),
+            Err(String::from(
+                [
+                    r#"could not find "escaped: foo\*bar-1\.2\.3,"#,
+                    r#"not escaped: foo*bar-1.2.3" in README.md"#
+                ]
+                .join(" ")
             ))
         )
     }
