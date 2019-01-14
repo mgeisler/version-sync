@@ -6,10 +6,7 @@
 [![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 [![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
 
-The `version-sync` crate will help you keep your version numbers in
-sync with the crate version defined in `Cargo.toml`.
-
-Rust projects typically reference this version number in several
+Rust projects typically reference the crate version number in several
 places, such as the `README.md` file. The `version-sync` crate makes
 it easy to add an integration test that checks that `README.md` is
 updated when the crate version changes.
@@ -113,6 +110,14 @@ your_crate = "0.1.2"
 ## Release History
 
 This is a changelog describing the most important changes per release.
+
+### Unreleased
+
+Special characters are now correctly escaped in the `{name}` and
+`{version}` placeholders in `assert_contains_regex!`.
+
+Dependencies were updated and `version-sync` now requires Rust version
+1.27.2 or later.
 
 ### Version 0.6.0 — November 22nd, 2018
 
