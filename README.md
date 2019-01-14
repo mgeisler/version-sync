@@ -111,6 +111,14 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+Special characters are now correctly escaped in the `{name}` and
+`{version}` placeholders in `assert_contains_regex!`.
+
+Dependencies were updated and `version-sync` now requires Rust version
+1.27.2 or later.
+
 ### Version 0.6.0 — November 22nd, 2018
 
 You can use `assert_contains_regex!` to grep files for the current
