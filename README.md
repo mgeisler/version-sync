@@ -16,7 +16,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.6"
+version-sync = "0.7"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -111,7 +111,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.7.0 — January 14th, 2019
 
 Special characters are now correctly escaped in the `{name}` and
 `{version}` placeholders in `assert_contains_regex!`.
