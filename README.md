@@ -6,10 +6,7 @@
 [![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 [![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
 
-The `version-sync` crate will help you keep your version numbers in
-sync with the crate version defined in `Cargo.toml`.
-
-Rust projects typically reference this version number in several
+Rust projects typically reference the crate version number in several
 places, such as the `README.md` file. The `version-sync` crate makes
 it easy to add an integration test that checks that `README.md` is
 updated when the crate version changes.
