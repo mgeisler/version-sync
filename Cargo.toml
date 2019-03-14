@@ -20,7 +20,7 @@ appveyor = { repository = "mgeisler/version-sync" }
 codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
-pulldown-cmark = { version = "0.2", default-features = false }
+pulldown-cmark = { version = "0.3", default-features = false }
 semver-parser = "0.9"
 syn = { version = "0.15", features = ["full"] }
 toml = "0.4"
