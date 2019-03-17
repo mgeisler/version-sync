@@ -4,7 +4,7 @@ use semver_parser::range::VersionReq;
 use semver_parser::version::parse as parse_version;
 use toml::Value;
 
-use helpers::{indent, read_file, version_matches_request, Result};
+use crate::helpers::{indent, read_file, version_matches_request, Result};
 
 /// A fenced code block.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -20,7 +20,7 @@ impl<'a> CodeBlock<'a> {
     /// works for fenced code blocks. The `start` index must be the
     /// first line of data in the code block, `end` must be right
     /// after the final newline of a fenced code block.
-    fn new(text: &'a str, start: usize, end: usize) -> CodeBlock {
+    fn new(text: &'a str, start: usize, end: usize) -> CodeBlock<'_> {
         // A code block with no closing fence is reported as being
         // closed at the end of the file. In that case, we cannot be
         // sure to find a final newline.
@@ -79,7 +79,7 @@ fn is_toml_block(lang: &str) -> bool {
 }
 
 /// Find all TOML code blocks in a Markdown text.
-fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
+fn find_toml_blocks(text: &str) -> Vec<CodeBlock<'_>> {
     let mut parser = Parser::new(text);
     let mut code_blocks = Vec::new();
     let mut start = 0;

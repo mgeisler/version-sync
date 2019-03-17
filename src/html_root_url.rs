@@ -4,7 +4,7 @@ use semver_parser::version::Version;
 use syn;
 use url::Url;
 
-use helpers::{indent, read_file, version_matches_request, Result};
+use crate::helpers::{indent, read_file, version_matches_request, Result};
 
 fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
     let url = Url::parse(value).map_err(|err| format!("parse error: {}", err))?;

@@ -13,6 +13,7 @@ keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
 license = "MIT"
 exclude = [".dir-locals.el"]
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "mgeisler/version-sync" }
