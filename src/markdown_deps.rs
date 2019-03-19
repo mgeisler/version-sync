@@ -4,7 +4,7 @@ use semver_parser::range::VersionReq;
 use semver_parser::version::parse as parse_version;
 use toml::Value;
 
-use helpers::{indent, read_file, version_matches_request, Result};
+use crate::helpers::{indent, read_file, version_matches_request, Result};
 
 /// A fenced code block.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -13,27 +13,6 @@ struct CodeBlock<'a> {
     content: &'a str,
     /// Line number starting with 1.
     first_line: usize,
-}
-
-impl<'a> CodeBlock<'a> {
-    /// Contruct a new code block from text[start..end]. This only
-    /// works for fenced code blocks. The `start` index must be the
-    /// first line of data in the code block, `end` must be right
-    /// after the final newline of a fenced code block.
-    fn new(text: &'a str, start: usize, end: usize) -> CodeBlock {
-        // A code block with no closing fence is reported as being
-        // closed at the end of the file. In that case, we cannot be
-        // sure to find a final newline.
-        let last_nl = match text[..end - 1].rfind('\n') {
-            Some(i) => i + 1,
-            None => start,
-        };
-        let first_line = 1 + text[..start].lines().count();
-        CodeBlock {
-            content: &text[start..last_nl],
-            first_line: first_line,
-        }
-    }
 }
 
 /// Extract a dependency on the given package from a TOML code block.
@@ -79,24 +58,21 @@ fn is_toml_block(lang: &str) -> bool {
 }
 
 /// Find all TOML code blocks in a Markdown text.
-fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
-    let mut parser = Parser::new(text);
+fn find_toml_blocks(text: &str) -> Vec<CodeBlock<'_>> {
+    let parser = Parser::new(text);
     let mut code_blocks = Vec::new();
-    let mut start = 0;
-    // A normal for-loop doesn't work since that would borrow the
-    // parser mutably for the duration of the loop body, preventing us
-    // from calling get_offset later.
-    while let Some(event) = parser.next() {
+    for (event, range) in parser.into_offset_iter() {
         match event {
-            Event::Start(Tag::CodeBlock(_)) => {
-                start = parser.get_offset();
-            }
-            Event::End(Tag::CodeBlock(lang)) => {
-                // Only fenced code blocks have language information.
-                if is_toml_block(&lang) {
-                    let end = parser.get_offset();
-                    code_blocks.push(CodeBlock::new(text, start, end));
-                }
+            Event::Start(Tag::CodeBlock(ref lang)) if is_toml_block(lang) => {
+                let line_count = text[..range.start].lines().count();
+                let code_block = &text[range];
+                let start = 1 + code_block.find('\n').unwrap_or(0);
+                let end = 1 + code_block.rfind('\n').unwrap_or(0);
+
+                code_blocks.push(CodeBlock {
+                    content: &code_block[start..end],
+                    first_line: 2 + line_count,
+                });
             }
             _ => {}
         }
@@ -172,17 +148,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn empty_toml_block() {
+    fn empty_markdown_file() {
         assert_eq!(find_toml_blocks(""), vec![]);
     }
 
     #[test]
-    fn indented_toml_block() {
+    fn indented_code_block() {
         assert_eq!(find_toml_blocks("    code block\n"), vec![]);
     }
 
     #[test]
-    fn single_line_toml_block() {
+    fn empty_toml_block() {
         assert_eq!(
             find_toml_blocks("```toml\n```"),
             vec![CodeBlock {
@@ -204,20 +180,18 @@ mod tests {
     }
 
     #[test]
-    fn code_block_new() {
+    fn nonempty_toml_block() {
         let text = "Preceding text.\n\
-                    ```\n\
+                    ```toml\n\
                     foo\n\
                     ```\n\
                     Trailing text";
-        let start = text.find("```\n").unwrap() + 4;
-        let end = text.rfind("```\n").unwrap() + 4;
         assert_eq!(
-            CodeBlock::new(text, start, end),
-            CodeBlock {
+            find_toml_blocks(&text),
+            vec![CodeBlock {
                 content: "foo\n",
                 first_line: 3
-            }
+            }]
         );
     }
 

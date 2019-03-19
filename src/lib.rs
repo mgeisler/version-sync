@@ -52,22 +52,14 @@
 #![doc(html_root_url = "https://docs.rs/version-sync/0.7.0")]
 #![deny(missing_docs)]
 
-extern crate itertools;
-extern crate pulldown_cmark;
-extern crate regex;
-extern crate semver_parser;
-extern crate syn;
-extern crate toml;
-extern crate url;
-
 mod contains_regex;
 mod helpers;
 mod html_root_url;
 mod markdown_deps;
 
-pub use contains_regex::check_contains_regex;
-pub use html_root_url::check_html_root_url;
-pub use markdown_deps::check_markdown_deps;
+pub use crate::contains_regex::check_contains_regex;
+pub use crate::html_root_url::check_html_root_url;
+pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
 ///

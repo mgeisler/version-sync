@@ -1,6 +1,6 @@
 use regex::{escape, Regex};
 
-use helpers::{read_file, Result};
+use crate::helpers::{read_file, Result};
 
 /// Check that `path` contain the regular expression given by
 /// `template`.

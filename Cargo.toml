@@ -13,6 +13,7 @@ keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
 license = "MIT"
 exclude = [".dir-locals.el"]
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "mgeisler/version-sync" }
@@ -20,10 +21,10 @@ appveyor = { repository = "mgeisler/version-sync" }
 codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
-pulldown-cmark = { version = "0.2", default-features = false }
+pulldown-cmark = { version = "0.4", default-features = false }
 semver-parser = "0.9"
 syn = { version = "0.15", features = ["full"] }
-toml = "0.4"
+toml = "0.5"
 url = "1.5.1"
 itertools = "0.8"
 regex = "1.1"

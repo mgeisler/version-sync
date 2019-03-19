@@ -111,6 +111,11 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased ###
+
+We now use Rust 2018, which means we reqire Rust version 1.31.0 or
+later.
+
 ### Version 0.7.0 — January 14th, 2019
 
 Special characters are now correctly escaped in the `{name}` and
