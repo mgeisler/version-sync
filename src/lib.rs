@@ -20,19 +20,16 @@
 //! `tests/version-numbers.rs` file with:
 //!
 //! ```rust
-//! #[macro_use]
-//! extern crate version_sync;
-//!
 //! #[test]
 //! # fn fake_hidden_test_case_1() {}
 //! fn test_readme_deps() {
-//!     assert_markdown_deps_updated!("README.md");
+//!     version_sync::assert_markdown_deps_updated!("README.md");
 //! }
 //!
 //! #[test]
 //! # fn fake_hidden_test_case_2() {}
 //! fn test_html_root_url() {
-//!     assert_html_root_url_updated!("src/lib.rs");
+//!     version_sync::assert_html_root_url_updated!("src/lib.rs");
 //! }
 //!
 //! # fn main() {
@@ -76,14 +73,11 @@ pub use crate::markdown_deps::check_markdown_deps;
 /// The typical way to use this macro is from an integration test:
 ///
 /// ```rust
-/// #[macro_use]
-/// extern crate version_sync;
-///
 /// #[test]
 /// # fn fake_hidden_test_case() {}
 /// # // The above function ensures test_readme_deps is compiled.
 /// fn test_readme_deps() {
-///     assert_markdown_deps_updated!("README.md");
+///     version_sync::assert_markdown_deps_updated!("README.md");
 /// }
 ///
 /// # fn main() {
@@ -130,14 +124,11 @@ macro_rules! assert_markdown_deps_updated {
 /// The typical way to use this macro is from an integration test:
 ///
 /// ```rust
-/// #[macro_use]
-/// extern crate version_sync;
-///
 /// #[test]
 /// # fn fake_hidden_test_case() {}
 /// # // The above function ensures test_html_root_url is compiled.
 /// fn test_html_root_url() {
-///     assert_html_root_url_updated!("src/lib.rs");
+///     version_sync::assert_html_root_url_updated!("src/lib.rs");
 /// }
 ///
 /// # fn main() {
@@ -184,15 +175,12 @@ macro_rules! assert_html_root_url_updated {
 /// The typical way to use this macro is from an integration test:
 ///
 /// ```rust
-/// #[macro_use]
-/// extern crate version_sync;
-///
 /// #[test]
 /// # fn fake_hidden_test_case() {}
 /// # // The above function ensures test_readme_mentions_version is
 /// # // compiled.
 /// fn test_readme_mentions_version() {
-///     assert_contains_regex!("README.md", "^### Version {version}");
+///     version_sync::assert_contains_regex!("README.md", "^### Version {version}");
 /// }
 ///
 /// # fn main() {
