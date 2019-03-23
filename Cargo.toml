@@ -24,6 +24,9 @@ codecov = { repository = "mgeisler/version-sync" }
 pulldown-cmark = { version = "0.4", default-features = false }
 semver-parser = "0.9"
 syn = { version = "0.15", features = ["full"] }
+# Enable the span-locations feature in proc-macro2, the exact version
+# is determined by the syn crate.
+proc-macro2 = { version = "*", features = ["span-locations"] }
 toml = "0.5"
 url = "1.5.1"
 itertools = "0.8"
