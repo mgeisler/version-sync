@@ -80,8 +80,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         if let syn::AttrStyle::Outer = attr.style {
             continue;
         }
-        let (ident, nested_meta_items) = match attr.interpret_meta() {
-            Some(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
+        let (ident, nested_meta_items) = match attr.parse_meta() {
+            Ok(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
             _ => continue,
         };
 
