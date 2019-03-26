@@ -72,7 +72,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     let code = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
     let version = parse_version(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
-    let krate: syn::File = syn::parse_str(&code)
+    let krate: syn::File = syn::parse_file(&code)
         .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
 
     println!("Checking doc attributes in {}...", path);
@@ -80,8 +80,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         if let syn::AttrStyle::Outer = attr.style {
             continue;
         }
-        let (ident, nested_meta_items) = match attr.interpret_meta() {
-            Some(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
+        let (ident, nested_meta_items) = match attr.parse_meta() {
+            Ok(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
             _ => continue,
         };
 
