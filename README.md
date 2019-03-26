@@ -153,7 +153,7 @@ Issues closed:
 Dependencies were updated and `version-sync` now requires Rust version
 1.21 or later.
 
-Error messages from `assert_html_root_url_updated` now again include
+Error messages from `assert_html_root_url_updated!` now again include
 line numbers (based on a heuristic until the `syn` crate can provide
 the information).
 
