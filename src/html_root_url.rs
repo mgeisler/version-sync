@@ -1,7 +1,7 @@
 use semver_parser::range::parse as parse_request;
 use semver_parser::version::parse as parse_version;
 use semver_parser::version::Version;
-use syn;
+use syn::spanned::Spanned;
 use url::Url;
 
 use crate::helpers::{indent, read_file, version_matches_request, Result};
@@ -114,26 +114,26 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                 _ => continue,
             };
 
-            // FIXME: use line number from the syn crate when it
-            // preserves span information. Here we simply find the
-            // first source line that contains "html_root_url".
-            //
-            // We know such a line must exist since we would have
-            // continue the loop above if it wasn't present.
-            let (line_no, source_line) = code
-                .lines()
-                .enumerate()
-                .find(|&(_, line)| line.contains("html_root_url"))
-                .expect("html_root_url attribute not present");
-
+            // FIXME: the proc-macro2-0.4.27 crate hides accurate span
+            // information behind a procmacro2_semver_exempt flag: the
+            // start line is correct, but the end line is always equal
+            // to the start. Luckily, most html_root_url attributes
+            // are on a single line, so the code below works okay.
+            let first_line = attr.span().start().line;
+            let last_line = attr.span().end().line;
+            // Getting the source code for a span is tracked upstream:
+            // https://github.com/alexcrichton/proc-macro2/issues/110.
+            let source_lines = code.lines().take(last_line).skip(first_line - 1);
             match check_result {
                 Ok(()) => {
-                    println!("{} (line {}) ... ok", path, line_no + 1);
+                    println!("{} (line {}) ... ok", path, first_line);
                     return Ok(());
                 }
                 Err(err) => {
-                    println!("{} (line {}) ... {} in", path, line_no + 1, err);
-                    println!("{}\n", indent(source_line));
+                    println!("{} (line {}) ... {} in", path, first_line, err);
+                    for line in source_lines {
+                        println!("{}", indent(line));
+                    }
                     return Err(format!("html_root_url errors in {}", path));
                 }
             }

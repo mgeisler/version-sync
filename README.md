@@ -114,7 +114,8 @@ This is a changelog describing the most important changes per release.
 ### Unreleased ###
 
 We now use Rust 2018, which means we reqire Rust version 1.31.0 or
-later.
+later. The `assert_html_root_url_updated!` macro will again report
+accurate line numbers based on span information from the `syn` crate.
 
 ### Version 0.7.0 — January 14th, 2019
 
