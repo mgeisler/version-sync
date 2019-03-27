@@ -12,6 +12,13 @@ fn test_readme_changelog() {
 }
 
 #[test]
+fn test_minimum_rustc_version() {
+    let version = "1.31.0";
+    version_sync::assert_contains_regex!(".travis.yml", &format!(r"^  - {}", version));
+    version_sync::assert_contains_regex!("README.md", &format!("badge/rustc-{}", version));
+}
+
+#[test]
 fn test_html_root_url() {
     version_sync::assert_html_root_url_updated!("src/lib.rs");
 }
