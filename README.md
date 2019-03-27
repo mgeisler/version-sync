@@ -2,6 +2,7 @@
 
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
+[![](https://img.shields.io/badge/rustc-1.31.0-blue.svg)][rust-2018]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 [![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
@@ -110,9 +111,10 @@ This is a changelog describing the most important changes per release.
 
 ### Unreleased ###
 
-We now use Rust 2018, which means we reqire Rust version 1.31.0 or
-later. The `assert_html_root_url_updated!` macro will again report
-accurate line numbers based on span information from the `syn` crate.
+We now use [Rust 2018][rust-2018], which means we require Rust version
+1.31.0 or later. The `assert_html_root_url_updated!` macro will again
+report accurate line numbers based on span information from the `syn`
+crate.
 
 ### Version 0.7.0 — January 14th, 2019
 
@@ -207,6 +209,7 @@ Contributions will be accepted under the same license.
 
 [crates-io]: https://crates.io/crates/version-sync
 [api-docs]: https://docs.rs/version-sync/
+[rust-2018]: https://doc.rust-lang.org/edition-guide/rust-2018/
 [travis-ci]: https://travis-ci.org/mgeisler/version-sync
 [appveyor]: https://ci.appveyor.com/project/mgeisler/version-sync
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
