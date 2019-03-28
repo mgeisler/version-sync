@@ -17,7 +17,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.7"
+version-sync = "0.8"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -109,7 +109,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased ###
+### Version 0.8.0 — March 28th, 2019
 
 We now use [Rust 2018][rust-2018], which means we require Rust version
 1.31.0 or later. The `assert_html_root_url_updated!` macro will again
