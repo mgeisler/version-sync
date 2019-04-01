@@ -109,6 +109,10 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Unreleased
+
+Dependencies were relaxed to make it easier to upgrade `version-sync`.
+
 ### Version 0.8.0 — March 28th, 2019
 
 We now use [Rust 2018][rust-2018], which means we require Rust version
