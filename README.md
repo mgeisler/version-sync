@@ -109,7 +109,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.8.1 — April 3rd, 2019
 
 Dependencies were relaxed to make it easier to upgrade `version-sync`.
 
