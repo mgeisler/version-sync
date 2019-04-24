@@ -2,7 +2,7 @@
 
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
-[![](https://img.shields.io/badge/rustc-1.31.0-blue.svg)][rust-2018]
+[![](https://img.shields.io/badge/rustc-1.31.0-4d76ae.svg)][rust-2018]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 [![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
