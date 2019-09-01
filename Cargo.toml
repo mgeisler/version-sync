@@ -26,6 +26,6 @@ semver-parser = "0.9"
 syn = { version = "0.15", features = ["full"] }
 proc-macro2 = { version = "0.4", features = ["span-locations"] }
 toml = "0.5"
-url = "1.0"
+url = "2.1"
 itertools = "0.8"
 regex = "1.1"
