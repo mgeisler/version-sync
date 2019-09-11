@@ -276,10 +276,11 @@ mod tests {
         let block = "[dependencies]\n\
                      foobar = 1.5.8";
         let request = extract_version_request("foobar", block);
-        assert_eq!(
-            request.unwrap_err(),
-            "TOML parse error: expected newline, found a period at line 2"
-        );
+        // toml 0.5.3 returns "found a period at line 2 column 13.
+        // Update the test when we bump the toml crate dependency.
+        assert!(request
+            .unwrap_err()
+            .contains("TOML parse error: expected newline, found a period at line 2"));
     }
 
     #[test]
