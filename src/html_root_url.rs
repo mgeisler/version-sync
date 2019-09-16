@@ -80,12 +80,12 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         if let syn::AttrStyle::Outer = attr.style {
             continue;
         }
-        let (ident, nested_meta_items) = match attr.parse_meta() {
-            Ok(syn::Meta::List(syn::MetaList { ident, nested, .. })) => (ident, nested),
+        let (attr_path, nested_meta_items) = match attr.parse_meta() {
+            Ok(syn::Meta::List(syn::MetaList { path, nested, .. })) => (path, nested),
             _ => continue,
         };
 
-        if ident != "doc" {
+        if !attr_path.is_ident("doc") {
             continue;
         }
 
@@ -97,8 +97,8 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
 
             let check_result = match *meta_item {
                 syn::Meta::NameValue(syn::MetaNameValue {
-                    ref ident, ref lit, ..
-                }) if ident == "html_root_url" => {
+                    ref path, ref lit, ..
+                }) if path.is_ident("html_root_url") => {
                     match *lit {
                         // Accept both cooked and raw strings here.
                         syn::Lit::Str(ref s) => url_matches(&s.value(), pkg_name, &version),
@@ -108,7 +108,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                         _ => continue,
                     }
                 }
-                syn::Meta::Word(ref name) if name == "html_root_url" => {
+                syn::Meta::Path(ref path) if path.is_ident("html_root_url") => {
                     Err(String::from("html_root_url attribute without URL"))
                 }
                 _ => continue,
