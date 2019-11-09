@@ -21,11 +21,11 @@ appveyor = { repository = "mgeisler/version-sync" }
 codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
-pulldown-cmark = { version = "0.4", default-features = false }
+pulldown-cmark = { version = "0.6", default-features = false }
 semver-parser = "0.9"
 syn = { version = "1.0", features = ["full"] }
 proc-macro2 = { version = "1.0", features = ["span-locations"] }
 toml = "0.5"
-url = "1.0"
+url = "2.1"
 itertools = "0.8"
 regex = "1.1"
