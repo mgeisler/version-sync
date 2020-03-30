@@ -8,9 +8,9 @@ use crate::helpers::{indent, read_file, version_matches_request, Result};
 
 /// A fenced code block.
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct CodeBlock<'a> {
+struct CodeBlock {
     /// Text between the fences.
-    content: &'a str,
+    content: String,
     /// Line number starting with 1.
     first_line: usize,
 }
@@ -58,21 +58,31 @@ fn is_toml_block(lang: &str) -> bool {
 }
 
 /// Find all TOML code blocks in a Markdown text.
-fn find_toml_blocks(text: &str) -> Vec<CodeBlock<'_>> {
+fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
     let parser = Parser::new(text);
     let mut code_blocks = Vec::new();
+    let mut current_block = None;
     for (event, range) in parser.into_offset_iter() {
+        println!("event {:?}: {:?}", event, &text[range.clone()]);
         match event {
             Event::Start(Tag::CodeBlock(Fenced(lang))) if is_toml_block(&lang) => {
-                let line_count = text[..range.start].lines().count();
-                let code_block = &text[range];
-                let start = 1 + code_block.find('\n').unwrap_or(0);
-                let end = 1 + code_block.rfind('\n').unwrap_or(0);
-
-                code_blocks.push(CodeBlock {
-                    content: &code_block[start..end],
-                    first_line: 2 + line_count,
+                // Count number of newlines before the ```. This gives
+                // us the line number of the fence, counted from 0.
+                let line_count = text[..range.start].chars().filter(|&ch| ch == '\n').count();
+                current_block = Some(CodeBlock {
+                    first_line: line_count + 2,
+                    content: String::new(),
                 });
+            }
+            Event::Text(code) => {
+                if let Some(block) = current_block.as_mut() {
+                    block.content.push_str(&code);
+                }
+            }
+            Event::End(Tag::CodeBlock(_)) => {
+                if let Some(block) = current_block.take() {
+                    code_blocks.push(block);
+                }
             }
             _ => {}
         }
@@ -125,13 +135,13 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     println!("Checking code blocks in {}...", path);
     let mut failed = false;
     for block in find_toml_blocks(&text) {
-        let result = extract_version_request(pkg_name, block.content)
+        let result = extract_version_request(pkg_name, &block.content)
             .and_then(|request| version_matches_request(&version, &request));
         match result {
             Err(err) => {
                 failed = true;
                 println!("{} (line {}) ... {} in", path, block.first_line, err);
-                println!("{}\n", indent(block.content));
+                println!("{}\n", indent(&block.content));
             }
             Ok(()) => println!("{} (line {}) ... ok", path, block.first_line),
         }
@@ -162,7 +172,7 @@ mod tests {
         assert_eq!(
             find_toml_blocks("```toml\n```"),
             vec![CodeBlock {
-                content: "",
+                content: String::new(),
                 first_line: 2
             }]
         );
@@ -173,7 +183,7 @@ mod tests {
         assert_eq!(
             find_toml_blocks("```toml\n"),
             vec![CodeBlock {
-                content: "",
+                content: String::new(),
                 first_line: 2
             }]
         );
@@ -189,8 +199,28 @@ mod tests {
         assert_eq!(
             find_toml_blocks(&text),
             vec![CodeBlock {
-                content: "foo\n",
+                content: String::from("foo\n"),
                 first_line: 3
+            }]
+        );
+    }
+
+    #[test]
+    fn blockquote_toml_block() {
+        let text = "> This is a blockquote\n\
+                    >\n\
+                    > ```toml\n\
+                    > foo\n\
+                    > \n\
+                    >   bar\n\
+                    >\n\
+                    > ```\n\
+                    ";
+        assert_eq!(
+            find_toml_blocks(&text),
+            vec![CodeBlock {
+                content: String::from("foo\n\n  bar\n\n"),
+                first_line: 4
             }]
         );
     }
