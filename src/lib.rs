@@ -46,7 +46,7 @@
 //! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
 //! [`assert_contains_regex`]: macro.assert_contains_regex.html
 
-#![doc(html_root_url = "https://docs.rs/version-sync/0.8.1")]
+#![doc(html_root_url = "https://docs.rs/version-sync/0.9.0")]
 #![deny(missing_docs)]
 
 mod contains_regex;
