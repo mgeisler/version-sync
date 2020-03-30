@@ -16,7 +16,7 @@ updated when the crate version changes.
 Add this to your `Cargo.toml`:
 ```toml
 [dev-dependencies]
-version-sync = "0.8"
+version-sync = "0.9"
 ```
 
 Then create a `tests/version-numbers.rs` file with:
@@ -108,7 +108,7 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Unreleased
+### Version 0.9.0 — March 30th, 2020
 
 Drop support for Rust 1.31.0 since our dependencies keep releasing new
 patch versions that push up the minimum required Rust version. These
@@ -123,6 +123,12 @@ therefore track the latest stable version of Rust from now on.
 
 At the time of writing, the code compiles with Rust 1.36, but this
 will likely become outdated soon.
+
+Issues closed:
+
+* [#83][issue-83]: version_sync fails to parse toml blocks when inside
+  blockquotes
+* [#84][issue-84]: Release update to crates.io with syn 1.0
 
 ### Version 0.8.1 — April 3rd, 2019
 
@@ -237,3 +243,5 @@ Contributions will be accepted under the same license.
 [issue-19]: https://github.com/mgeisler/version-sync/issues/19
 [issue-39]: https://github.com/mgeisler/version-sync/issues/39
 [issue-42]: https://github.com/mgeisler/version-sync/issues/42
+[issue-83]: https://github.com/mgeisler/version-sync/issues/83
+[issue-84]: https://github.com/mgeisler/version-sync/issues/84
