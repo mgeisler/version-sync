@@ -63,7 +63,6 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
     let mut code_blocks = Vec::new();
     let mut current_block = None;
     for (event, range) in parser.into_offset_iter() {
-        println!("event {:?}: {:?}", event, &text[range.clone()]);
         match event {
             Event::Start(Tag::CodeBlock(Fenced(lang))) if is_toml_block(&lang) => {
                 // Count number of newlines before the ```. This gives
