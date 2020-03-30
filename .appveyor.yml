@@ -1,11 +1,6 @@
 environment:
   matrix:
   - TOOLCHAIN: stable
-  - TOOLCHAIN: nightly
-
-matrix:
-  allow_failures:
-    - TOOLCHAIN: nightly
 
 install:
   - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe

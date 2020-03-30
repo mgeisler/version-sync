@@ -21,16 +21,11 @@ appveyor = { repository = "mgeisler/version-sync" }
 codecov = { repository = "mgeisler/version-sync" }
 
 [dependencies]
-# This crate is compatible with Rust 2018, i.e., Rustc version 1.31.0.
-# Version requirements of dependencies can be bumped as long as the
-# dependencies compile with that compiler version. Some versions
-# requirements below an upper limit to indicate when the dependency
-# stops compiling with a Rust 2018 compatible compiler.
-pulldown-cmark = { version = "0.4, <0.5", default-features = false }
+pulldown-cmark = { version = "0.7", default-features = false }
 semver-parser = "0.9"
 syn = { version = "1.0", features = ["full"] }
 proc-macro2 = { version = "1.0", features = ["span-locations"] }
 toml = "0.5"
-url = "1.0, <2.0"
-itertools = "0.8"
+url = "2.0"
+itertools = "0.9"
 regex = "1.1"
