@@ -2,7 +2,6 @@
 
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
-[![](https://img.shields.io/badge/rustc-1.31.0-4d76ae.svg)][rust-2018]
 [![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
 [![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
 [![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
@@ -108,6 +107,22 @@ your_crate = "0.1.2"
 ## Release History
 
 This is a changelog describing the most important changes per release.
+
+### Unreleased
+
+Drop support for Rust 1.31.0 since our dependencies keep releasing new
+patch versions that push up the minimum required Rust version. These
+updates mean that `version-sync` 0.8.1 no longer compiles with Rust
+1.31.0 because `cargo sync` will pull in too new versions of the
+direct and transitive dependencies. This happens even if there are no
+changes in `version-sync`.
+
+The constant build failures in our CI makes it infeasible to keep
+`version-sync` compatible with any particular version of Rust. We will
+therefore track the latest stable version of Rust from now on.
+
+At the time of writing, the code compiles with Rust 1.36, but this
+will likely become outdated soon.
 
 ### Version 0.8.1 — April 3rd, 2019
 

@@ -1,7 +1,6 @@
 language: rust
 
 rust:
-  - 1.31.0 # Rust 2018
   - stable
   - nightly
 
