@@ -1,4 +1,4 @@
-use pulldown_cmark::{Event, Parser, Tag};
+use pulldown_cmark::{CodeBlockKind::Fenced, Event, Parser, Tag};
 use semver_parser::range::parse as parse_request;
 use semver_parser::range::VersionReq;
 use semver_parser::version::parse as parse_version;
@@ -63,7 +63,7 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock<'_>> {
     let mut code_blocks = Vec::new();
     for (event, range) in parser.into_offset_iter() {
         match event {
-            Event::Start(Tag::CodeBlock(ref lang)) if is_toml_block(lang) => {
+            Event::Start(Tag::CodeBlock(Fenced(ref lang))) if is_toml_block(lang) => {
                 let line_count = text[..range.start].lines().count();
                 let code_block = &text[range];
                 let start = 1 + code_block.find('\n').unwrap_or(0);
