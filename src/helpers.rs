@@ -1,13 +1,34 @@
+use std::fmt::Display;
 use std::fs::File;
 use std::io::{self, Read};
 use std::result;
 
-use itertools::join;
 use semver_parser::range::{Op, VersionReq};
 use semver_parser::version::Version;
 
 /// The common result type, our errors will be simple strings.
 pub type Result<T> = result::Result<T, String>;
+
+fn join<T>(iter: T, sep: &str) -> String
+where
+    T: IntoIterator,
+    T::Item: Display,
+{
+    let mut buf = String::new();
+    let mut iter = iter.into_iter();
+    if let Some(item) = iter.next() {
+        let item = item.to_string();
+        buf.push_str(&item);
+    } else {
+        return buf;
+    }
+    for item in iter {
+        buf.push_str(sep);
+        let item = item.to_string();
+        buf.push_str(&item);
+    }
+    buf
+}
 
 /// Return all data from `path`.
 pub fn read_file(path: &str) -> io::Result<String> {
