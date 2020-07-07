@@ -108,6 +108,14 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.9.1 — July 7th, 2020
+
+* [#91](https://github.com/mgeisler/version-sync/pull/91): Pull in
+  fewer dependencies. This optimizes the build time by 1-2 seconds.
+
+* [#92](https://github.com/mgeisler/version-sync/pull/92): Normalize
+  `\r\n` to `\n` to ensure `^` and `$` always match line boundaries.
+
 ### Version 0.9.0 — March 30th, 2020
 
 Drop support for Rust 1.31.0 since our dependencies keep releasing new
