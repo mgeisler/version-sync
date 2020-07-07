@@ -118,4 +118,22 @@ mod tests {
         )
     }
 
+    #[test]
+    fn line_boundaries() {
+        // The regex crate doesn't treat \r\n as a line boundary
+        // (https://github.com/rust-lang/regex/issues/244), so
+        // version-sync makes sure to normalize \r\n to \n when
+        // reading files.
+        use std::io::Write;
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+
+        println!("Path: {}", file.path().to_str().unwrap());
+
+        file.write_all(b"first line\r\nsecond line\r\nthird line\r\n")
+            .unwrap();
+        assert_eq!(
+            check_contains_regex(file.path().to_str().unwrap(), "^second line$", "", ""),
+            Ok(())
+        )
+    }
 }
