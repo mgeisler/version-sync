@@ -4,11 +4,8 @@ rust:
   - stable
   - nightly
 
-cache: cargo
+install:
+  - cargo build
 
-before_script:
-  - cargo update
-
-matrix:
-  allow_failures:
-    - rust: nightly
+script:
+  - cargo test
