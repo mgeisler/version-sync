@@ -100,7 +100,7 @@ macro_rules! assert_markdown_deps_updated {
         let pkg_name = env!("CARGO_PKG_NAME");
         let pkg_version = env!("CARGO_PKG_VERSION");
         if let Err(err) = $crate::check_markdown_deps($path, pkg_name, pkg_version) {
-            panic!(err);
+            panic!("{}", err);
         }
     };
 }
@@ -152,7 +152,7 @@ macro_rules! assert_html_root_url_updated {
         let pkg_name = env!("CARGO_PKG_NAME");
         let pkg_version = env!("CARGO_PKG_VERSION");
         if let Err(err) = $crate::check_html_root_url($path, pkg_name, pkg_version) {
-            panic!(err);
+            panic!("{}", err);
         }
     };
 }
@@ -215,7 +215,7 @@ macro_rules! assert_contains_regex {
         let pkg_name = env!("CARGO_PKG_NAME");
         let pkg_version = env!("CARGO_PKG_VERSION");
         if let Err(err) = $crate::check_contains_regex($path, $format, pkg_name, pkg_version) {
-            panic!(err);
+            panic!("{}", err);
         }
     };
 }
