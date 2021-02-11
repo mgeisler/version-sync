@@ -1,10 +1,9 @@
 # Keep your Version Numbers in Sync with Cargo.toml
 
+[![](https://github.com/mgeisler/version-sync/workflows/build/badge.svg)][build-status]
+[![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
 [![](https://img.shields.io/crates/v/version-sync.svg)][crates-io]
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
-[![](https://travis-ci.org/mgeisler/version-sync.svg?branch=master)][travis-ci]
-[![](https://ci.appveyor.com/api/projects/status/github/mgeisler/version-sync?branch=master&svg=true)][appveyor]
-[![](https://codecov.io/gh/mgeisler/version-sync/branch/master/graph/badge.svg)][codecov]
 
 Rust projects typically reference the crate version number in several
 places, such as the `README.md` file. The `version-sync` crate makes
@@ -240,12 +239,11 @@ Versions 0.1.0 to 0.1.2 were released under the name `check-versions`.
 Version-sync can be distributed according to the [MIT license][mit].
 Contributions will be accepted under the same license.
 
+[build-status]: https://github.com/mgeisler/version-sync/actions?query=workflow%3Abuild+branch%3Amaster
+[codecov]: https://codecov.io/gh/mgeisler/version-sync
 [crates-io]: https://crates.io/crates/version-sync
 [api-docs]: https://docs.rs/version-sync/
 [rust-2018]: https://doc.rust-lang.org/edition-guide/rust-2018/
-[travis-ci]: https://travis-ci.org/mgeisler/version-sync
-[appveyor]: https://ci.appveyor.com/project/mgeisler/version-sync
-[codecov]: https://codecov.io/gh/mgeisler/version-sync
 [mit]: LICENSE
 [issue-17]: https://github.com/mgeisler/version-sync/issues/17
 [issue-19]: https://github.com/mgeisler/version-sync/issues/19
