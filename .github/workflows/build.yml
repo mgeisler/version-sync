@@ -1,0 +1,45 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  build:
+    name: Build on ${{ matrix.os }} (${{ matrix.rust }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+        rust:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install ${{ matrix.rust }} Rust
+        run: rustup default ${{ matrix.rust }}
+
+      - name: Build and test
+        run: cargo test
+
+  build-documentation:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build documentation and check intra-doc links
+        env:
+          RUSTDOCFLAGS: --deny broken_intra_doc_links
+        run: cargo doc --all-features --no-deps
