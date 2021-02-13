@@ -82,7 +82,7 @@ jobs:
 
             var content = fs.readFileSync('README.md', 'utf8')
             const today = new Date().toISOString().split('T')[0]
-            const heading = `### Version ${new_version} (${today})\n`
+            const heading = `### Version ${new_version} — ${today}\n`
             if (content.match('### Unreleased')) {
               content = content.replace('### Unreleased', `${heading}\n${changelog}`)
             } else {

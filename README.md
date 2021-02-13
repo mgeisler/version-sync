@@ -49,10 +49,11 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured
 ```
 
 If the README or `html_root_url` is out of sync with the crate
-version, the tests fail. In this example, the version number in
-`Cargo.toml` has been changed to 0.2.0 while the `README.md` and
-`html_root_url` remain unchanged. The tests now fail and the
-problematic TOML code and attribute are shown:
+version, the tests fail. In this example, the crate is called
+`your-crate` and the version number in `Cargo.toml` has been changed
+to 0.2.0 while the `README.md` and `html_root_url` still use 0.1.2.
+The tests now fail and the problematic TOML code and attribute are
+shown:
 
 ```
 $ cargo test
@@ -69,7 +70,7 @@ failures:
 	Checking code blocks in README.md...
 README.md (line 20) ... expected minor version 2, found 1 in
     [dev-dependencies]
-    version-sync = "0.1"
+    your-crate = "0.1"
 
 thread 'test_readme_deps' panicked at 'dependency errors in README.md', tests/version-numbers.rs:6
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
@@ -77,7 +78,7 @@ note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ---- test_html_root_url stdout ----
 	Checking doc attributes in src/lib.rs...
 src/lib.rs ... expected minor version 2, found 1 in
-    #![doc(html_root_url = "https://docs.rs/version-sync/0.1.3")]
+    #![doc(html_root_url = "https://docs.rs/your-crate/0.1.2")]
 
 thread 'test_html_root_url' panicked at 'html_root_url errors in src/lib.rs', tests/version-numbers.rs:11
 
@@ -106,6 +107,17 @@ your_crate = "0.1.2"
 ## Release History
 
 This is a changelog describing the most important changes per release.
+
+### Version 0.9.2 — 2021-02-13
+
+* [#94](https://github.com/mgeisler/version-sync/pull/94): chore:
+  Update pulldown-cmark to 0.8.
+* [#95](https://github.com/mgeisler/version-sync/pull/95): Fix
+  `non_fmt_panic` lint error in latest nightly.
+* [#100](https://github.com/mgeisler/version-sync/pull/100): Setup
+  weekly build to catch errors on nightly Rust.
+* [#101](https://github.com/mgeisler/version-sync/pull/101): Forbid
+  warnings when building in CI.
 
 ### Version 0.9.1 — 2020-07-07
 
