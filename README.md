@@ -6,8 +6,8 @@
 [![](https://docs.rs/version-sync/badge.svg)][api-docs]
 
 Rust projects typically reference the crate version number in several
-places, such as the `README.md` file. The `version-sync` crate makes
-it easy to add an integration test that checks that `README.md` is
+places, such as the `README.md` file. The version-sync crate makes it
+easy to add an integration test that checks that `README.md` is
 updated when the crate version changes.
 
 ## Usage
@@ -119,13 +119,13 @@ This is a changelog describing the most important changes per release.
 
 Drop support for Rust 1.31.0 since our dependencies keep releasing new
 patch versions that push up the minimum required Rust version. These
-updates mean that `version-sync` 0.8.1 no longer compiles with Rust
+updates mean that version-sync 0.8.1 no longer compiles with Rust
 1.31.0 because `cargo sync` will pull in too new versions of the
 direct and transitive dependencies. This happens even if there are no
-changes in `version-sync`.
+changes in version-sync.
 
 The constant build failures in our CI makes it infeasible to keep
-`version-sync` compatible with any particular version of Rust. We will
+version-sync compatible with any particular version of Rust. We will
 therefore track the latest stable version of Rust from now on.
 
 At the time of writing, the code compiles with Rust 1.36, but this
@@ -133,19 +133,19 @@ will likely become outdated soon.
 
 Issues closed:
 
-* [#83][issue-83]: version_sync fails to parse toml blocks when inside
-  blockquotes
+* [#83][issue-83]: version-sync fails to parse toml blocks when
+  inside blockquotes
 * [#84][issue-84]: Release update to crates.io with syn 1.0
 
 ### Version 0.8.1 — 2019-04-03
 
-Dependencies were relaxed to make it easier to upgrade `version-sync`.
+Dependencies were relaxed to make it easier to upgrade version-sync.
 
 ### Version 0.8.0 — 2019-03-28
 
 We now use [Rust 2018][rust-2018], which means we require Rust version
 1.31.0 or later. The `assert_html_root_url_updated!` macro will again
-report accurate line numbers based on span information from the `syn`
+report accurate line numbers based on span information from the syn
 crate.
 
 ### Version 0.7.0 — 2019-01-14
@@ -153,7 +153,7 @@ crate.
 Special characters are now correctly escaped in the `{name}` and
 `{version}` placeholders in `assert_contains_regex!`.
 
-Dependencies were updated and `version-sync` now requires Rust version
+Dependencies were updated and version-sync now requires Rust version
 1.27.2 or later.
 
 ### Version 0.6.0 — 2018-11-22
@@ -182,18 +182,18 @@ Issues closed:
 
 ### Version 0.5.0 — 2017-11-19
 
-Dependencies were updated and `version-sync` now requires Rust version
+Dependencies were updated and version-sync now requires Rust version
 1.21 or later.
 
 Error messages from `assert_html_root_url_updated!` now again include
-line numbers (based on a heuristic until the `syn` crate can provide
-the information).
+line numbers (based on a heuristic until the syn crate can provide the
+information).
 
 ### Version 0.4.0 — 2017-11-01
 
-This release replaces the dependency on the abandoned `syntex_syntax`
-with with a dependency on the much lighter `syn` crate. This improves
-compilation speed. Unfortunately, the `syn` crate does not provide
+This release replaces the dependency on the abandoned syntex_syntax
+with with a dependency on the much lighter syn crate. This improves
+compilation speed. Unfortunately, the syn crate does not provide
 information about line numbers, so error messages are are no longer as
 good. We might be able to work around that in a later version.
 
@@ -232,7 +232,7 @@ documentation on docs.rs.
 First public release with support for finding outdated version numbers
 in `dependencies` and `dev-dependencies`.
 
-Versions 0.1.0 to 0.1.2 were released under the name `check-versions`.
+Versions 0.1.0 to 0.1.2 were released under the name check-versions.
 
 ## License
 
