@@ -108,6 +108,17 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.9.2 — 2021-02-13
+
+* [#94](https://github.com/mgeisler/version-sync/pull/94): chore:
+  Update pulldown-cmark to 0.8.
+* [#95](https://github.com/mgeisler/version-sync/pull/95): Fix
+  `non_fmt_panic` lint error in latest nightly.
+* [#100](https://github.com/mgeisler/version-sync/pull/100): Setup
+  weekly build to catch errors on nightly Rust.
+* [#101](https://github.com/mgeisler/version-sync/pull/101): Forbid
+  warnings when building in CI.
+
 ### Version 0.9.1 — 2020-07-07
 
 * [#91](https://github.com/mgeisler/version-sync/pull/91): Pull in
