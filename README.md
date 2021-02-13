@@ -132,7 +132,7 @@ will likely become outdated soon.
 
 Issues closed:
 
-* [#83][issue-83]: version-sync fails to parse toml blocks when
+* [#83][issue-83]: version-sync fails to parse TOML blocks when
   inside blockquotes
 * [#84][issue-84]: Release update to crates.io with syn 1.0
 
