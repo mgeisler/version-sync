@@ -2,10 +2,7 @@
 name = "version-sync"
 version = "0.9.1"
 authors = ["Martin Geisler <martin@geisler.net>"]
-description = """
-Simple crate for ensuring that version numbers in README files are
-updated when the crate version changes.
-"""
+description = "Crate for ensuring that version numbers in README files and other files are kept in sync with the crate version."
 documentation = "https://docs.rs/version-sync/"
 repository = "https://github.com/mgeisler/version-sync"
 readme = "README.md"
