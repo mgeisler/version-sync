@@ -21,7 +21,7 @@ jobs:
         run: |
           NAME=$(cargo metadata -q --no-deps | jq -r '.packages[0].name')
           VERSION=$(cargo metadata -q --no-deps | jq -r '.packages[0].version')
-          CHANGELOG=$(awk '/^## Version/ {i++}; i==1 {print}; i>1 {exit}' README.md \
+          CHANGELOG=$(awk '/^### Version/ {i++}; i==1 {print}; i>1 {exit}' README.md \
             | python3 -c 'import sys, json; print(json.dumps(sys.stdin.read()))')
           echo "::set-output name=name::$NAME"
           echo "::set-output name=version::$VERSION"
