@@ -111,7 +111,6 @@ This is a changelog describing the most important changes per release.
 
 * [#91](https://github.com/mgeisler/version-sync/pull/91): Pull in
   fewer dependencies. This optimizes the build time by 1-2 seconds.
-
 * [#92](https://github.com/mgeisler/version-sync/pull/92): Normalize
   `\r\n` to `\n` to ensure `^` and `$` always match line boundaries.
 
