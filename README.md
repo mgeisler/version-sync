@@ -32,9 +32,9 @@ fn test_html_root_url() {
 ```
 
 This integration test will ensure that the dependencies mentioned in
-your `README.md` file is kept in sync with your crate version and that
-your `html_root_url` points to the correct documentation on docs.rs.
-If everything is well, the test passes:
+your `README.md` file are kept in sync with your crate version and
+that your `html_root_url` points to the correct documentation on
+docs.rs. If everything is well, the test passes:
 
 ```
 $ cargo test
