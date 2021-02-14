@@ -11,11 +11,6 @@ categories = ["development-tools", "rust-patterns"]
 license = "MIT"
 edition = "2018"
 
-[badges]
-travis-ci = { repository = "mgeisler/version-sync" }
-appveyor = { repository = "mgeisler/version-sync" }
-codecov = { repository = "mgeisler/version-sync" }
-
 [dependencies]
 pulldown-cmark = { version = "0.8", default-features = false }
 semver-parser = "0.9"
