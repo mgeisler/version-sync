@@ -7,13 +7,18 @@
 //! version numbers need updating:
 //!
 //! * TOML examples in the `README.md` files that show how to add a
-//!   dependency on your crate. See [`assert_markdown_deps_updated`].
+//!   dependency on your crate, gated behind the "markdown" feature.
+//!   See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
-//!   version. See [`assert_contains_regex`].
+//!   version, gated behind the "regex_version" feature.
+//!   See [`assert_contains_regex`].
 //!
 //! * The [`html_root_url`] attribute that tells other crates where to
-//!   find your documentation. See [`assert_html_root_url_updated`].
+//!   find your documentation, gated behind the "html_root_url" feature.
+//!   See [`assert_html_root_url_updated`].
+//!
+//! At least one of the three features must be enabled.
 //!
 //! A typical configuration will use an integration test to verify
 //! that all version numbers are in sync. Create a
@@ -70,6 +75,7 @@ pub use crate::html_root_url::check_html_root_url;
 pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
+/// Requires the "markdown" feature.
 ///
 /// The macro will call [`check_markdown_deps`] on the file name given
 /// in order to check that the TOML examples found all depend on a
@@ -118,6 +124,7 @@ macro_rules! assert_markdown_deps_updated {
 }
 
 /// Assert that the `html_root_url` attribute is up to date.
+/// Requires the "html_root_url" feature.
 ///
 /// Library code is [expected to set `html_root_url`][api-guidelines]
 /// to point to docs.rs so that rustdoc can generate correct links
@@ -171,6 +178,7 @@ macro_rules! assert_html_root_url_updated {
 }
 
 /// Assert that versions numbers are up to date via a regex.
+/// Requires the "regex_version" feature.
 ///
 /// This macro allows you verify that the current version number is
 /// mentioned in a particular file, such as a changelog file. You do
