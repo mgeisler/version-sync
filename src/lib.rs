@@ -22,18 +22,22 @@
 //! ```rust
 //! #[test]
 //! # fn fake_hidden_test_case_1() {}
+//! # #[cfg(feature = "markdown")]
 //! fn test_readme_deps() {
 //!     version_sync::assert_markdown_deps_updated!("README.md");
 //! }
 //!
 //! #[test]
 //! # fn fake_hidden_test_case_2() {}
+//! # #[cfg(feature = "html_root_url")]
 //! fn test_html_root_url() {
 //!     version_sync::assert_html_root_url_updated!("src/lib.rs");
 //! }
 //!
 //! # fn main() {
+//! #     #[cfg(feature = "markdown")]
 //! #     test_readme_deps();
+//! #     #[cfg(feature = "html_root_url")]
 //! #     test_html_root_url();
 //! # }
 //! ```
@@ -54,8 +58,15 @@ mod helpers;
 mod html_root_url;
 mod markdown_deps;
 
+// Hacky workaround to ensure that at least one feature is enabled
+#[cfg(not(any(feature = "regex_version", feature = "html_root_url", feature = "markdown")))]
+const AT_LEAST_ONE_FEATURE_ENABLED: u32 = "bad";
+
+#[cfg(feature = "regex_version")]
 pub use crate::contains_regex::check_contains_regex;
+#[cfg(feature = "html_root_url")]
 pub use crate::html_root_url::check_html_root_url;
+#[cfg(feature = "markdown")]
 pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
@@ -95,6 +106,7 @@ pub use crate::markdown_deps::check_markdown_deps;
 ///
 /// [`check_markdown_deps`]: fn.check_markdown_deps.html
 #[macro_export]
+#[cfg(feature = "markdown")]
 macro_rules! assert_markdown_deps_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");
@@ -147,6 +159,7 @@ macro_rules! assert_markdown_deps_updated {
 /// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 /// [`check_html_root_url`]: fn.check_html_root_url.html
 #[macro_export]
+#[cfg(feature = "html_root_url")]
 macro_rules! assert_html_root_url_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");
@@ -210,6 +223,7 @@ macro_rules! assert_html_root_url_updated {
 ///
 /// [`check_contains_regex`]: fn.check_contains_regex.html
 #[macro_export]
+#[cfg(feature = "regex_version")]
 macro_rules! assert_contains_regex {
     ($path:expr, $format:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");

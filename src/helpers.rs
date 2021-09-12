@@ -1,14 +1,22 @@
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 use std::fmt::Display;
+#[cfg(any(feature = "html_root_url", feature = "markdown", feature = "regex_version"))]
 use std::fs::File;
+#[cfg(any(feature = "html_root_url", feature = "markdown", feature = "regex_version"))]
 use std::io::{self, Read};
+#[cfg(any(feature = "html_root_url", feature = "markdown", feature = "regex_version"))]
 use std::result;
 
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 use semver_parser::range::{Op, VersionReq};
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 use semver_parser::version::Version;
 
 /// The common result type, our errors will be simple strings.
+#[cfg(any(feature = "html_root_url", feature = "markdown", feature = "regex_version"))]
 pub type Result<T> = result::Result<T, String>;
 
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 fn join<T>(iter: T, sep: &str) -> String
 where
     T: IntoIterator,
@@ -33,6 +41,7 @@ where
 /// Return all data from `path`. Line boundaries are normalized from
 /// "\r\n" to "\n" to make sure "^" and "$" will match them. See
 /// https://github.com/rust-lang/regex/issues/244 for details.
+#[cfg(any(feature = "html_root_url", feature = "markdown", feature = "regex_version"))]
 pub fn read_file(path: &str) -> io::Result<String> {
     let mut file = File::open(path)?;
     let mut buf = String::new();
@@ -41,11 +50,13 @@ pub fn read_file(path: &str) -> io::Result<String> {
 }
 
 /// Indent every line in text by four spaces.
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 pub fn indent(text: &str) -> String {
     join(text.lines().map(|line| String::from("    ") + line), "\n")
 }
 
 /// Verify that the version range request matches the given version.
+#[cfg(any(feature = "html_root_url", feature = "markdown"))]
 pub fn version_matches_request(version: &Version, request: &VersionReq) -> Result<()> {
     if request.predicates.len() != 1 {
         // Can only handle simple dependencies
@@ -93,11 +104,15 @@ pub fn version_matches_request(version: &Version, request: &VersionReq) -> Resul
 
 #[cfg(test)]
 mod tests {
+    #[cfg(any(feature = "html_root_url", feature = "markdown"))]
     use semver_parser::range::parse as parse_request;
+    #[cfg(any(feature = "html_root_url", feature = "markdown"))]
     use semver_parser::version::parse as parse_version;
 
+    #[cfg(any(feature = "html_root_url", feature = "markdown"))]
     use super::*;
 
+    #[cfg(any(feature = "html_root_url", feature = "markdown"))]
     mod test_version_matches_request {
         use super::*;
 

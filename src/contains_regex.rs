@@ -1,3 +1,4 @@
+#![cfg(feature = "regex_version")]
 use regex::{escape, Regex};
 
 use crate::helpers::{read_file, Result};
