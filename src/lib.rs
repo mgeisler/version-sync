@@ -64,7 +64,8 @@ mod html_root_url;
 mod markdown_deps;
 
 // Hacky workaround to ensure that at least one feature is enabled
-#[cfg(not(any(feature = "regex_version", feature = "html_root_url", feature = "markdown")))]
+#[cfg(not(any(feature = "regex_version", feature = "html_root_url",
+    feature = "markdown")))]
 const AT_LEAST_ONE_FEATURE_ENABLED: u32 = "bad";
 
 #[cfg(feature = "regex_version")]
