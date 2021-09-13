@@ -39,6 +39,7 @@ jobs:
         # Use if statement to invert exit code: this should fail
       - name: Check failure to build with no features
         run: if cargo check; then false; else true; fi
+        shell: bash
 
       - name: Build and test with markdown feature
         run: cargo test --features markdown
