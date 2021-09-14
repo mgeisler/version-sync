@@ -38,17 +38,17 @@ jobs:
 
         # Use if statement to invert exit code: this should fail
       - name: Check failure to build with no features
-        run: if cargo check; then false; else true; fi
+        run: if cargo check --no-default-features; then false; else true; fi
         shell: bash
 
-      - name: Build and test with markdown feature
-        run: cargo test --features markdown
+      - name: Build and test with markdown_deps_updated feature
+        run: cargo test --no-default-features --features markdown_deps_updated
 
-      - name: Build and test with html_root_url feature
-        run: cargo test --features html_root_url
+      - name: Build and test with html_root_url_updated feature
+        run: cargo test --no-default-features --features html_root_url_updated
 
-      - name: Build and test with regex feature
-        run: cargo test --features regex_version
+      - name: Build and test with contains_regex feature
+        run: cargo test --no-default-features --features contains_regex
 
       - name: Build and test with all features
         run: cargo test --all-features
