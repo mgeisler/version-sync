@@ -12,6 +12,7 @@ license = "MIT"
 edition = "2018"
 
 [features]
+default = ["markdown_deps_updated", "html_root_url_updated", "contains_regex"]
 markdown_deps_updated = ["pulldown-cmark", "semver-parser", "toml"]
 html_root_url_updated = ["url", "semver-parser", "syn", "proc-macro2"]
 contains_regex = ["regex"]
