@@ -13,7 +13,7 @@ edition = "2018"
 
 [features]
 markdown_deps_updated = ["pulldown-cmark", "semver-parser", "toml"]
-html_root_url = ["url", "semver-parser", "syn", "proc-macro2"]
+html_root_url_updated = ["url", "semver-parser", "syn", "proc-macro2"]
 contains_regex = ["regex"]
 
 [dependencies]

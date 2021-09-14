@@ -35,7 +35,7 @@
 //!
 //! #[test]
 //! # fn fake_hidden_test_case_2() {}
-//! # #[cfg(feature = "html_root_url")]
+//! # #[cfg(feature = "html_root_url_updated")]
 //! fn test_html_root_url() {
 //!     version_sync::assert_html_root_url_updated!("src/lib.rs");
 //! }
@@ -43,7 +43,7 @@
 //! # fn main() {
 //! #     #[cfg(feature = "markdown_deps_updated")]
 //! #     test_readme_deps();
-//! #     #[cfg(feature = "html_root_url")]
+//! #     #[cfg(feature = "html_root_url_updated")]
 //! #     test_html_root_url();
 //! # }
 //! ```
@@ -65,13 +65,13 @@ mod html_root_url;
 mod markdown_deps;
 
 // Ensure that at least one feature is enabled
-#[cfg(not(any(feature = "contains_regex", feature = "html_root_url",
+#[cfg(not(any(feature = "contains_regex", feature = "html_root_url_updated",
     feature = "markdown_deps_updated")))]
 std::compile_error!("Please select at least one feature.");
 
 #[cfg(feature = "contains_regex")]
 pub use crate::contains_regex::check_contains_regex;
-#[cfg(feature = "html_root_url")]
+#[cfg(feature = "html_root_url_updated")]
 pub use crate::html_root_url::check_html_root_url;
 #[cfg(feature = "markdown_deps_updated")]
 pub use crate::markdown_deps::check_markdown_deps;
@@ -126,7 +126,7 @@ macro_rules! assert_markdown_deps_updated {
 }
 
 /// Assert that the `html_root_url` attribute is up to date.
-/// Requires the "html_root_url" feature.
+/// Requires the "html_root_url_updated" feature.
 ///
 /// Library code is [expected to set `html_root_url`][api-guidelines]
 /// to point to docs.rs so that rustdoc can generate correct links
@@ -168,7 +168,7 @@ macro_rules! assert_markdown_deps_updated {
 /// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 /// [`check_html_root_url`]: fn.check_html_root_url.html
 #[macro_export]
-#[cfg(feature = "html_root_url")]
+#[cfg(feature = "html_root_url_updated")]
 macro_rules! assert_html_root_url_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");
