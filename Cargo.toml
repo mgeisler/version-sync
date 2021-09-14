@@ -12,7 +12,7 @@ license = "MIT"
 edition = "2018"
 
 [features]
-markdown = ["pulldown-cmark", "semver-parser", "toml"]
+markdown_deps_updated = ["pulldown-cmark", "semver-parser", "toml"]
 html_root_url = ["url", "semver-parser", "syn", "proc-macro2"]
 regex_version = ["regex"]
 

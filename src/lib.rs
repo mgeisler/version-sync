@@ -7,7 +7,8 @@
 //! version numbers need updating:
 //!
 //! * TOML examples in the `README.md` files that show how to add a
-//!   dependency on your crate, gated behind the "markdown" feature.
+//!   dependency on your crate, gated behind the
+//!   "markdown_deps_updated" feature.
 //!   See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
@@ -27,7 +28,7 @@
 //! ```rust
 //! #[test]
 //! # fn fake_hidden_test_case_1() {}
-//! # #[cfg(feature = "markdown")]
+//! # #[cfg(feature = "markdown_deps_updated")]
 //! fn test_readme_deps() {
 //!     version_sync::assert_markdown_deps_updated!("README.md");
 //! }
@@ -40,7 +41,7 @@
 //! }
 //!
 //! # fn main() {
-//! #     #[cfg(feature = "markdown")]
+//! #     #[cfg(feature = "markdown_deps_updated")]
 //! #     test_readme_deps();
 //! #     #[cfg(feature = "html_root_url")]
 //! #     test_html_root_url();
@@ -65,18 +66,18 @@ mod markdown_deps;
 
 // Ensure that at least one feature is enabled
 #[cfg(not(any(feature = "regex_version", feature = "html_root_url",
-    feature = "markdown")))]
+    feature = "markdown_deps_updated")))]
 std::compile_error!("Please select at least one feature.");
 
 #[cfg(feature = "regex_version")]
 pub use crate::contains_regex::check_contains_regex;
 #[cfg(feature = "html_root_url")]
 pub use crate::html_root_url::check_html_root_url;
-#[cfg(feature = "markdown")]
+#[cfg(feature = "markdown_deps_updated")]
 pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
-/// Requires the "markdown" feature.
+/// Requires the "markdown_deps_updated" feature.
 ///
 /// The macro will call [`check_markdown_deps`] on the file name given
 /// in order to check that the TOML examples found all depend on a
@@ -113,7 +114,7 @@ pub use crate::markdown_deps::check_markdown_deps;
 ///
 /// [`check_markdown_deps`]: fn.check_markdown_deps.html
 #[macro_export]
-#[cfg(feature = "markdown")]
+#[cfg(feature = "markdown_deps_updated")]
 macro_rules! assert_markdown_deps_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");

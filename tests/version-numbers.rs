@@ -1,5 +1,5 @@
 #[test]
-#[cfg(feature = "markdown")]
+#[cfg(feature = "markdown_deps_updated")]
 fn test_readme_deps() {
     version_sync::assert_markdown_deps_updated!("README.md");
 }
