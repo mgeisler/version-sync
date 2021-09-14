@@ -1,30 +1,18 @@
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-use std::fmt::Display;
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
-    feature = "contains_regex"))]
-use std::fs::File;
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
-    feature = "contains_regex"))]
-use std::io::{self, Read};
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
-    feature = "contains_regex"))]
-use std::result;
-
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-use semver_parser::range::{Op, VersionReq};
+use semver_parser::range::VersionReq;
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
 use semver_parser::version::Version;
 
 /// The common result type, our errors will be simple strings.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
     feature = "contains_regex"))]
-pub type Result<T> = result::Result<T, String>;
+pub type Result<T> = std::result::Result<T, String>;
 
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
 fn join<T>(iter: T, sep: &str) -> String
 where
     T: IntoIterator,
-    T::Item: Display,
+    T::Item: std::fmt::Display,
 {
     let mut buf = String::new();
     let mut iter = iter.into_iter();
@@ -47,8 +35,10 @@ where
 /// https://github.com/rust-lang/regex/issues/244 for details.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
     feature = "contains_regex"))]
-pub fn read_file(path: &str) -> io::Result<String> {
-    let mut file = File::open(path)?;
+pub fn read_file(path: &str) -> std::io::Result<String> {
+    use std::io::Read;
+
+    let mut file = std::fs::File::open(path)?;
     let mut buf = String::new();
     file.read_to_string(&mut buf)?;
     Ok(buf.replace("\r\n", "\n"))
@@ -63,6 +53,7 @@ pub fn indent(text: &str) -> String {
 /// Verify that the version range request matches the given version.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
 pub fn version_matches_request(version: &Version, request: &VersionReq) -> Result<()> {
+    use semver_parser::range::Op;
     if request.predicates.len() != 1 {
         // Can only handle simple dependencies
         return Ok(());
