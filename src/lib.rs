@@ -65,11 +65,11 @@ mod html_root_url;
 mod markdown_deps;
 
 // Ensure that at least one feature is enabled
-#[cfg(not(any(feature = "regex_version", feature = "html_root_url",
+#[cfg(not(any(feature = "contains_regex", feature = "html_root_url",
     feature = "markdown_deps_updated")))]
 std::compile_error!("Please select at least one feature.");
 
-#[cfg(feature = "regex_version")]
+#[cfg(feature = "contains_regex")]
 pub use crate::contains_regex::check_contains_regex;
 #[cfg(feature = "html_root_url")]
 pub use crate::html_root_url::check_html_root_url;
@@ -180,7 +180,7 @@ macro_rules! assert_html_root_url_updated {
 }
 
 /// Assert that versions numbers are up to date via a regex.
-/// Requires the "regex_version" feature.
+/// Requires the "contains_regex" feature.
 ///
 /// This macro allows you verify that the current version number is
 /// mentioned in a particular file, such as a changelog file. You do
@@ -233,7 +233,7 @@ macro_rules! assert_html_root_url_updated {
 ///
 /// [`check_contains_regex`]: fn.check_contains_regex.html
 #[macro_export]
-#[cfg(feature = "regex_version")]
+#[cfg(feature = "contains_regex")]
 macro_rules! assert_contains_regex {
     ($path:expr, $format:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");

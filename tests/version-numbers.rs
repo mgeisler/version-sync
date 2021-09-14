@@ -5,7 +5,7 @@ fn test_readme_deps() {
 }
 
 #[test]
-#[cfg(feature = "regex_version")]
+#[cfg(feature = "contains_regex")]
 fn test_readme_changelog() {
     version_sync::assert_contains_regex!(
         "README.md",

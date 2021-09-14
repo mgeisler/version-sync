@@ -1,13 +1,13 @@
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated"))]
 use std::fmt::Display;
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated",
-    feature = "regex_version"))]
+    feature = "contains_regex"))]
 use std::fs::File;
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated",
-    feature = "regex_version"))]
+    feature = "contains_regex"))]
 use std::io::{self, Read};
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated",
-    feature = "regex_version"))]
+    feature = "contains_regex"))]
 use std::result;
 
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated"))]
@@ -17,7 +17,7 @@ use semver_parser::version::Version;
 
 /// The common result type, our errors will be simple strings.
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated",
-    feature = "regex_version"))]
+    feature = "contains_regex"))]
 pub type Result<T> = result::Result<T, String>;
 
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated"))]
@@ -46,7 +46,7 @@ where
 /// "\r\n" to "\n" to make sure "^" and "$" will match them. See
 /// https://github.com/rust-lang/regex/issues/244 for details.
 #[cfg(any(feature = "html_root_url", feature = "markdown_deps_updated",
-    feature = "regex_version"))]
+    feature = "contains_regex"))]
 pub fn read_file(path: &str) -> io::Result<String> {
     let mut file = File::open(path)?;
     let mut buf = String::new();
