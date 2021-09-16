@@ -3,6 +3,8 @@ use semver_parser::range::VersionReq;
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
 use semver_parser::version::Version;
 
+// Some imports are inside the function bodies to scope them in a cfg block.
+
 /// The common result type, our errors will be simple strings.
 pub type Result<T> = std::result::Result<T, String>;
 
