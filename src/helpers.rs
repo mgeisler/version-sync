@@ -4,8 +4,6 @@ use semver_parser::range::VersionReq;
 use semver_parser::version::Version;
 
 /// The common result type, our errors will be simple strings.
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
-    feature = "contains_regex"))]
 pub type Result<T> = std::result::Result<T, String>;
 
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
