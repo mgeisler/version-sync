@@ -31,8 +31,6 @@ where
 /// Return all data from `path`. Line boundaries are normalized from
 /// "\r\n" to "\n" to make sure "^" and "$" will match them. See
 /// https://github.com/rust-lang/regex/issues/244 for details.
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated",
-    feature = "contains_regex"))]
 pub fn read_file(path: &str) -> std::io::Result<String> {
     use std::io::Read;
 
