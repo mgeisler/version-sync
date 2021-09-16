@@ -1,15 +1,15 @@
 //! `version-sync` provides macros for keeping version numbers in sync
 //! with your crate version.
 //!
+//! # Library Overview
+//!
 //! When making a release of a Rust project, you typically need to
 //! adjust some version numbers in your code and documentation. This
 //! crate gives you macros that covers some typical cases where
 //! version numbers need updating:
 //!
 //! * TOML examples in the `README.md` files that show how to add a
-//!   dependency on your crate, gated behind the
-//!   "markdown_deps_updated" feature.
-//!   See [`assert_markdown_deps_updated`].
+//!   dependency on your crate. See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
 //!   version, gated behind the "regex_version" feature.
@@ -19,7 +19,7 @@
 //!   find your documentation, gated behind the "html_root_url" feature.
 //!   See [`assert_html_root_url_updated`].
 //!
-//! At least one of the three features must be enabled.
+//! The macros are gated behind individual features, as detailed below.
 //!
 //! A typical configuration will use an integration test to verify
 //! that all version numbers are in sync. Create a
@@ -51,6 +51,16 @@
 //! When you run `cargo test`, your version numbers will be
 //! automatically checked.
 //!
+//! # Cargo Features
+//!
+//! Each of the macros above are gated behind a feature:
+//!
+//! * `markdown_deps_updated` enables [`assert_markdown_deps_updated`].
+//! * `html_root_url_updated` enables [`assert_html_root_url_updated`].
+//! * `contains_regex` enables [`assert_contains_regex`].
+//!
+//! All of these features are enabled by default.
+//!
 //! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 //! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
 //! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
@@ -77,7 +87,6 @@ pub use crate::html_root_url::check_html_root_url;
 pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
-/// Requires the "markdown_deps_updated" feature.
 ///
 /// The macro will call [`check_markdown_deps`] on the file name given
 /// in order to check that the TOML examples found all depend on a
@@ -86,6 +95,8 @@ pub use crate::markdown_deps::check_markdown_deps;
 /// version is taken from `$CARGO_PKG_VERSION`. These environment
 /// variables are automatically set by Cargo when compiling your
 /// crate.
+///
+/// This macro is enabled by the `markdown_deps_updated` feature.
 ///
 /// # Usage
 ///
@@ -126,7 +137,6 @@ macro_rules! assert_markdown_deps_updated {
 }
 
 /// Assert that the `html_root_url` attribute is up to date.
-/// Requires the "html_root_url_updated" feature.
 ///
 /// Library code is [expected to set `html_root_url`][api-guidelines]
 /// to point to docs.rs so that rustdoc can generate correct links
@@ -139,6 +149,8 @@ macro_rules! assert_markdown_deps_updated {
 /// environment variable and the version is taken from
 /// `$CARGO_PKG_VERSION`. These environment variables are
 /// automatically set by Cargo when compiling your crate.
+///
+/// This macro is enabled by the `html_root_url_updated` feature.
 ///
 /// # Usage
 ///
@@ -180,7 +192,6 @@ macro_rules! assert_html_root_url_updated {
 }
 
 /// Assert that versions numbers are up to date via a regex.
-/// Requires the "contains_regex" feature.
 ///
 /// This macro allows you verify that the current version number is
 /// mentioned in a particular file, such as a changelog file. You do
@@ -192,6 +203,8 @@ macro_rules! assert_html_root_url_updated {
 /// taken from the `$CARGO_PKG_NAME` and `$CARGO_PKG_VERSION`
 /// environment variables. These environment variables are
 /// automatically set by Cargo when compiling your crate.
+///
+/// This macro is enabled by the `contains_regex` feature.
 ///
 /// # Usage
 ///
