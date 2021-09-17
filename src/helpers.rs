@@ -1,9 +1,4 @@
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-use semver_parser::range::VersionReq;
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-use semver_parser::version::Version;
-
-// Some imports are inside the function bodies to scope them in a cfg block.
+// Imports are inside the function bodies to scope them in a cfg block.
 
 /// The common result type, our errors will be simple strings.
 pub type Result<T> = std::result::Result<T, String>;
@@ -50,7 +45,8 @@ pub fn indent(text: &str) -> String {
 
 /// Verify that the version range request matches the given version.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-pub fn version_matches_request(version: &Version, request: &VersionReq) -> Result<()> {
+pub fn version_matches_request(version: &semver_parser::version::Version,
+        request: &semver_parser::range::VersionReq) -> Result<()> {
     use semver_parser::range::Op;
     if request.predicates.len() != 1 {
         // Can only handle simple dependencies
