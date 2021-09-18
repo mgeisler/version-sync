@@ -67,6 +67,7 @@
 //! [`assert_contains_regex`]: macro.assert_contains_regex.html
 
 #![doc(html_root_url = "https://docs.rs/version-sync/0.9.2")]
+#![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
 mod contains_regex;
