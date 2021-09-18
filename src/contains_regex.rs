@@ -1,3 +1,4 @@
+#![cfg(feature = "contains_regex")]
 use regex::{escape, Regex};
 
 use crate::helpers::{read_file, Result};

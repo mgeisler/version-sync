@@ -1,6 +1,8 @@
 //! `version-sync` provides macros for keeping version numbers in sync
 //! with your crate version.
 //!
+//! # Library Overview
+//!
 //! When making a release of a Rust project, you typically need to
 //! adjust some version numbers in your code and documentation. This
 //! crate gives you macros that covers some typical cases where
@@ -10,10 +12,14 @@
 //!   dependency on your crate. See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
-//!   version. See [`assert_contains_regex`].
+//!   version, gated behind the "regex_version" feature.
+//!   See [`assert_contains_regex`].
 //!
 //! * The [`html_root_url`] attribute that tells other crates where to
-//!   find your documentation. See [`assert_html_root_url_updated`].
+//!   find your documentation, gated behind the "html_root_url" feature.
+//!   See [`assert_html_root_url_updated`].
+//!
+//! The macros are gated behind individual features, as detailed below.
 //!
 //! A typical configuration will use an integration test to verify
 //! that all version numbers are in sync. Create a
@@ -22,24 +28,38 @@
 //! ```rust
 //! #[test]
 //! # fn fake_hidden_test_case_1() {}
+//! # #[cfg(feature = "markdown_deps_updated")]
 //! fn test_readme_deps() {
 //!     version_sync::assert_markdown_deps_updated!("README.md");
 //! }
 //!
 //! #[test]
 //! # fn fake_hidden_test_case_2() {}
+//! # #[cfg(feature = "html_root_url_updated")]
 //! fn test_html_root_url() {
 //!     version_sync::assert_html_root_url_updated!("src/lib.rs");
 //! }
 //!
 //! # fn main() {
+//! #     #[cfg(feature = "markdown_deps_updated")]
 //! #     test_readme_deps();
+//! #     #[cfg(feature = "html_root_url_updated")]
 //! #     test_html_root_url();
 //! # }
 //! ```
 //!
 //! When you run `cargo test`, your version numbers will be
 //! automatically checked.
+//!
+//! # Cargo Features
+//!
+//! Each of the macros above are gated behind a feature:
+//!
+//! * `markdown_deps_updated` enables [`assert_markdown_deps_updated`].
+//! * `html_root_url_updated` enables [`assert_html_root_url_updated`].
+//! * `contains_regex` enables [`assert_contains_regex`].
+//!
+//! All of these features are enabled by default.
 //!
 //! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 //! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
@@ -54,8 +74,16 @@ mod helpers;
 mod html_root_url;
 mod markdown_deps;
 
+// Ensure that at least one feature is enabled
+#[cfg(not(any(feature = "contains_regex", feature = "html_root_url_updated",
+    feature = "markdown_deps_updated")))]
+std::compile_error!("Please select at least one feature.");
+
+#[cfg(feature = "contains_regex")]
 pub use crate::contains_regex::check_contains_regex;
+#[cfg(feature = "html_root_url_updated")]
 pub use crate::html_root_url::check_html_root_url;
+#[cfg(feature = "markdown_deps_updated")]
 pub use crate::markdown_deps::check_markdown_deps;
 
 /// Assert that dependencies on the current package are up to date.
@@ -67,6 +95,8 @@ pub use crate::markdown_deps::check_markdown_deps;
 /// version is taken from `$CARGO_PKG_VERSION`. These environment
 /// variables are automatically set by Cargo when compiling your
 /// crate.
+///
+/// This macro is enabled by the `markdown_deps_updated` feature.
 ///
 /// # Usage
 ///
@@ -95,6 +125,7 @@ pub use crate::markdown_deps::check_markdown_deps;
 ///
 /// [`check_markdown_deps`]: fn.check_markdown_deps.html
 #[macro_export]
+#[cfg(feature = "markdown_deps_updated")]
 macro_rules! assert_markdown_deps_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");
@@ -118,6 +149,8 @@ macro_rules! assert_markdown_deps_updated {
 /// environment variable and the version is taken from
 /// `$CARGO_PKG_VERSION`. These environment variables are
 /// automatically set by Cargo when compiling your crate.
+///
+/// This macro is enabled by the `html_root_url_updated` feature.
 ///
 /// # Usage
 ///
@@ -147,6 +180,7 @@ macro_rules! assert_markdown_deps_updated {
 /// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 /// [`check_html_root_url`]: fn.check_html_root_url.html
 #[macro_export]
+#[cfg(feature = "html_root_url_updated")]
 macro_rules! assert_html_root_url_updated {
     ($path:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");
@@ -169,6 +203,8 @@ macro_rules! assert_html_root_url_updated {
 /// taken from the `$CARGO_PKG_NAME` and `$CARGO_PKG_VERSION`
 /// environment variables. These environment variables are
 /// automatically set by Cargo when compiling your crate.
+///
+/// This macro is enabled by the `contains_regex` feature.
 ///
 /// # Usage
 ///
@@ -210,6 +246,7 @@ macro_rules! assert_html_root_url_updated {
 ///
 /// [`check_contains_regex`]: fn.check_contains_regex.html
 #[macro_export]
+#[cfg(feature = "contains_regex")]
 macro_rules! assert_contains_regex {
     ($path:expr, $format:expr) => {
         let pkg_name = env!("CARGO_PKG_NAME");

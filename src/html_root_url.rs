@@ -1,3 +1,4 @@
+#![cfg(feature = "html_root_url_updated")]
 use semver_parser::range::parse as parse_request;
 use semver_parser::version::parse as parse_version;
 use semver_parser::version::Version;

@@ -1,3 +1,4 @@
+#![cfg(feature = "markdown_deps_updated")]
 use pulldown_cmark::{CodeBlockKind::Fenced, Event, Parser, Tag};
 use semver_parser::range::parse as parse_request;
 use semver_parser::range::VersionReq;

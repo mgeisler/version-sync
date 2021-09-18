@@ -32,8 +32,26 @@ jobs:
       - name: Install ${{ matrix.rust }} Rust
         run: rustup default ${{ matrix.rust }}
 
-      - name: Build and test
-        run: cargo test
+        # Verify that features work by themselves
+        # Features should not interfere with each other
+        # Should only need to check 0, 1, and (all) 3 features enabled
+
+        # Use if statement to invert exit code: this should fail
+      - name: Check failure to build with no features
+        run: if cargo check --no-default-features; then false; else true; fi
+        shell: bash
+
+      - name: Build and test with markdown_deps_updated feature
+        run: cargo test --no-default-features --features markdown_deps_updated
+
+      - name: Build and test with html_root_url_updated feature
+        run: cargo test --no-default-features --features html_root_url_updated
+
+      - name: Build and test with contains_regex feature
+        run: cargo test --no-default-features --features contains_regex
+
+      - name: Build and test with all features
+        run: cargo test --all-features
 
   build-documentation:
     name: Build documentation
