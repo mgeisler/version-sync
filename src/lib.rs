@@ -129,8 +129,6 @@ pub use crate::markdown_deps::check_markdown_deps;
 /// # Panics
 ///
 /// If any TOML code block fails the check, `panic!` will be invoked.
-///
-/// [`check_markdown_deps`]: fn.check_markdown_deps.html
 #[macro_export]
 #[cfg(feature = "markdown_deps_updated")]
 macro_rules! assert_markdown_deps_updated {
@@ -185,7 +183,6 @@ macro_rules! assert_markdown_deps_updated {
 /// If the `html_root_url` fails the check, `panic!` will be invoked.
 ///
 /// [api-guidelines]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
-/// [`check_html_root_url`]: fn.check_html_root_url.html
 #[macro_export]
 #[cfg(feature = "html_root_url_updated")]
 macro_rules! assert_html_root_url_updated {
@@ -315,8 +312,6 @@ macro_rules! assert_contains_substring {
 ///
 /// If the regular expression cannot be found, `panic!` will be
 /// invoked and your integration test will fail.
-///
-/// [`check_contains_regex`]: fn.check_contains_regex.html
 #[macro_export]
 #[cfg(feature = "contains_regex")]
 macro_rules! assert_contains_regex {
