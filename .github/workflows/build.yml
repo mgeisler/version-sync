@@ -34,12 +34,9 @@ jobs:
 
         # Verify that features work by themselves
         # Features should not interfere with each other
-        # Should only need to check 0, 1, and (all) 3 features enabled
 
-        # Use if statement to invert exit code: this should fail
-      - name: Check failure to build with no features
-        run: if cargo check --no-default-features; then false; else true; fi
-        shell: bash
+      - name: Build and test with no default feature
+        run: cargo test --no-default-features
 
       - name: Build and test with markdown_deps_updated feature
         run: cargo test --no-default-features --features markdown_deps_updated

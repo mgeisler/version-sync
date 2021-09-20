@@ -12,14 +12,15 @@
 //!   dependency on your crate. See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
-//!   version, gated behind the "regex_version" feature.
-//!   See [`assert_contains_regex`].
+//!   version, gated behind the "regex_version" feature. See
+//!   [`assert_contains_regex`] and [`assert_contains_substring`].
 //!
 //! * The [`html_root_url`] attribute that tells other crates where to
 //!   find your documentation, gated behind the "html_root_url" feature.
 //!   See [`assert_html_root_url_updated`].
 //!
-//! The macros are gated behind individual features, as detailed below.
+//! Except for [`assert_contains_substring`], the macros are gated
+//! behind individual features, as detailed below.
 //!
 //! A typical configuration will use an integration test to verify
 //! that all version numbers are in sync. Create a
@@ -29,12 +30,18 @@
 //! #[test]
 //! # fn fake_hidden_test_case_1() {}
 //! # #[cfg(feature = "markdown_deps_updated")]
-//! fn test_readme_deps() {
+//! fn test_readme_deps_updated() {
 //!     version_sync::assert_markdown_deps_updated!("README.md");
 //! }
 //!
 //! #[test]
 //! # fn fake_hidden_test_case_2() {}
+//! fn test_readme_mentions_version() {
+//!     version_sync::assert_contains_substring!("README.md", "Version {version}");
+//! }
+//!
+//! #[test]
+//! # fn fake_hidden_test_case_3() {}
 //! # #[cfg(feature = "html_root_url_updated")]
 //! fn test_html_root_url() {
 //!     version_sync::assert_html_root_url_updated!("src/lib.rs");
@@ -42,7 +49,8 @@
 //!
 //! # fn main() {
 //! #     #[cfg(feature = "markdown_deps_updated")]
-//! #     test_readme_deps();
+//! #     test_readme_deps_updated();
+//! #     test_readme_mentions_version();
 //! #     #[cfg(feature = "html_root_url_updated")]
 //! #     test_html_root_url();
 //! # }
@@ -53,7 +61,8 @@
 //!
 //! # Cargo Features
 //!
-//! Each of the macros above are gated behind a feature:
+//! In case you only need some of the macros above, you can disable
+//! them individually using Cargo features. The features are:
 //!
 //! * `markdown_deps_updated` enables [`assert_markdown_deps_updated`].
 //! * `html_root_url_updated` enables [`assert_html_root_url_updated`].
@@ -71,17 +80,14 @@
 #![deny(missing_docs)]
 
 mod contains_regex;
+mod contains_substring;
 mod helpers;
 mod html_root_url;
 mod markdown_deps;
 
-// Ensure that at least one feature is enabled
-#[cfg(not(any(feature = "contains_regex", feature = "html_root_url_updated",
-    feature = "markdown_deps_updated")))]
-std::compile_error!("Please select at least one feature.");
-
 #[cfg(feature = "contains_regex")]
 pub use crate::contains_regex::check_contains_regex;
+pub use crate::contains_substring::check_contains_substring;
 #[cfg(feature = "html_root_url_updated")]
 pub use crate::html_root_url::check_html_root_url;
 #[cfg(feature = "markdown_deps_updated")]
@@ -192,12 +198,77 @@ macro_rules! assert_html_root_url_updated {
     };
 }
 
+/// Assert that versions numbers are up to date via substring matching.
+///
+/// This macro allows you verify that the current version number is
+/// mentioned in a particular file, such as a changelog file. You do
+/// this by specifying a template which will be matched against the
+/// content of the file.
+///
+/// The macro calls [`check_contains_substring`] on the file name
+/// given. The package name and current package version is
+/// automatically taken from the `$CARGO_PKG_NAME` and
+/// `$CARGO_PKG_VERSION` environment variables. These environment
+/// variables are automatically set by Cargo when compiling your
+/// crate.
+///
+/// # Usage
+///
+/// The typical way to use this macro is from an integration test:
+///
+/// ```rust
+/// #[test]
+/// # fn fake_hidden_test_case() {}
+/// # // The above function ensures test_readme_mentions_version is
+/// # // compiled.
+/// fn test_readme_mentions_version() {
+///     version_sync::assert_contains_substring!("README.md", "### Version {version}");
+/// }
+///
+/// # fn main() {
+/// #     test_readme_mentions_version();
+/// # }
+/// ```
+///
+/// Tests are run with the current directory set to directory where
+/// your `Cargo.toml` file is, so this will find a `README.md` file
+/// next to your `Cargo.toml` file. It will then check that there is a
+/// heading mentioning the current version of your crate.
+///
+/// The template can contain placeholders which are replaced before
+/// the search begins:
+///
+/// * `{version}`: the current version number of your package.
+/// * `{name}`: the name of your package.
+///
+/// This way you can search for things like `"Latest version of {name}
+/// is: {version}"` and make sure you update your READMEs and
+/// changelogs consistently.
+///
+/// See [`assert_contains_regex`] if you want to search for a regular
+/// expression instead.
+///
+/// # Panics
+///
+/// If the substring cannot be found, `panic!` will be invoked and
+/// your integration test will fail.
+#[macro_export]
+macro_rules! assert_contains_substring {
+    ($path:expr, $format:expr) => {
+        let pkg_name = env!("CARGO_PKG_NAME");
+        let pkg_version = env!("CARGO_PKG_VERSION");
+        if let Err(err) = $crate::check_contains_substring($path, $format, pkg_name, pkg_version) {
+            panic!("{}", err);
+        }
+    };
+}
+
 /// Assert that versions numbers are up to date via a regex.
 ///
 /// This macro allows you verify that the current version number is
 /// mentioned in a particular file, such as a changelog file. You do
 /// this by specifying a regular expression which will be matched
-/// against the file.
+/// against the contents of the file.
 ///
 /// The macro calls [`check_contains_regex`] on the file name given.
 /// The package name and current package version is automatically
