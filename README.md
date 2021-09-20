@@ -108,10 +108,19 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.9.3 — 2021-09-20
+
+* [#108](https://github.com/mgeisler/version-sync/pull/108): Make all
+  dependencies optional.
+* [#109](https://github.com/mgeisler/version-sync/pull/109): Forbid
+  the use of unsafe code.
+* [#110](https://github.com/mgeisler/version-sync/pull/110): Add
+  simple `check_contains_version` function.
+
 ### Version 0.9.2 — 2021-02-13
 
-* [#94](https://github.com/mgeisler/version-sync/pull/94): chore:
-  Update pulldown-cmark to 0.8.
+* [#94](https://github.com/mgeisler/version-sync/pull/94): Update
+  pulldown-cmark to 0.8.
 * [#95](https://github.com/mgeisler/version-sync/pull/95): Fix
   `non_fmt_panic` lint error in latest nightly.
 * [#100](https://github.com/mgeisler/version-sync/pull/100): Setup
