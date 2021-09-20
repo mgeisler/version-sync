@@ -12,12 +12,11 @@
 //!   dependency on your crate. See [`assert_markdown_deps_updated`].
 //!
 //! * A `Changelog.md` file that should at least mention the current
-//!   version, gated behind the "regex_version" feature. See
-//!   [`assert_contains_regex`] and [`assert_contains_substring`].
+//!   version. See [`assert_contains_regex`] and
+//!   [`assert_contains_substring`].
 //!
 //! * The [`html_root_url`] attribute that tells other crates where to
-//!   find your documentation, gated behind the "html_root_url" feature.
-//!   See [`assert_html_root_url_updated`].
+//!   find your documentation. See [`assert_html_root_url_updated`].
 //!
 //! Except for [`assert_contains_substring`], the macros are gated
 //! behind individual features, as detailed below.
