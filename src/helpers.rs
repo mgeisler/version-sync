@@ -1,4 +1,5 @@
-// Imports are inside the function bodies to scope them in a cfg block.
+use std::fs::File;
+use std::io::{self, Read};
 
 /// The common result type, our errors will be simple strings.
 pub type Result<T> = std::result::Result<T, String>;
@@ -28,10 +29,8 @@ where
 /// Return all data from `path`. Line boundaries are normalized from
 /// "\r\n" to "\n" to make sure "^" and "$" will match them. See
 /// https://github.com/rust-lang/regex/issues/244 for details.
-pub fn read_file(path: &str) -> std::io::Result<String> {
-    use std::io::Read;
-
-    let mut file = std::fs::File::open(path)?;
+pub fn read_file(path: &str) -> io::Result<String> {
+    let mut file = File::open(path)?;
     let mut buf = String::new();
     file.read_to_string(&mut buf)?;
     Ok(buf.replace("\r\n", "\n"))
@@ -45,8 +44,10 @@ pub fn indent(text: &str) -> String {
 
 /// Verify that the version range request matches the given version.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-pub fn version_matches_request(version: &semver_parser::version::Version,
-        request: &semver_parser::range::VersionReq) -> Result<()> {
+pub fn version_matches_request(
+    version: &semver_parser::version::Version,
+    request: &semver_parser::range::VersionReq,
+) -> Result<()> {
     use semver_parser::range::Op;
     if request.predicates.len() != 1 {
         // Can only handle simple dependencies
