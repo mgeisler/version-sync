@@ -111,7 +111,7 @@ This is a changelog describing the most important changes per release.
 ### Version 0.9.3 — 2021-09-20
 
 * [#108](https://github.com/mgeisler/version-sync/pull/108): Make all
-  dependencies optional.
+  dependencies optional. Thanks @rlee287!
 * [#109](https://github.com/mgeisler/version-sync/pull/109): Forbid
   the use of unsafe code.
 * [#110](https://github.com/mgeisler/version-sync/pull/110): Add
