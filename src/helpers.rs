@@ -45,25 +45,25 @@ pub fn indent(text: &str) -> String {
 /// Verify that the version range request matches the given version.
 #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
 pub fn version_matches_request(
-    version: &semver_parser::version::Version,
-    request: &semver_parser::range::VersionReq,
+    version: &semver::Version,
+    request: &semver::VersionReq,
 ) -> Result<()> {
-    use semver_parser::range::Op;
-    if request.predicates.len() != 1 {
+    use semver::Op;
+    if request.comparators.len() != 1 {
         // Can only handle simple dependencies
         return Ok(());
     }
 
-    let pred = &request.predicates[0];
-    match pred.op {
-        Op::Tilde | Op::Compatible => {
-            if pred.major != version.major {
+    let comparator = &request.comparators[0];
+    match comparator.op {
+        Op::Tilde | Op::Caret => {
+            if comparator.major != version.major {
                 return Err(format!(
                     "expected major version {}, found {}",
-                    version.major, pred.major,
+                    version.major, comparator.major,
                 ));
             }
-            if let Some(minor) = pred.minor {
+            if let Some(minor) = comparator.minor {
                 if minor != version.minor {
                     return Err(format!(
                         "expected minor version {}, found {}",
@@ -71,7 +71,7 @@ pub fn version_matches_request(
                     ));
                 }
             }
-            if let Some(patch) = pred.patch {
+            if let Some(patch) = comparator.patch {
                 if patch != version.patch {
                     return Err(format!(
                         "expected patch version {}, found {}",
@@ -79,11 +79,10 @@ pub fn version_matches_request(
                     ));
                 }
             }
-            if pred.pre != version.pre {
+            if comparator.pre != version.pre {
                 return Err(format!(
-                    "expected pre-release {:?}, found {:?}",
-                    join(&version.pre, "."),
-                    join(&pred.pre, ".")
+                    "expected pre-release \"{}\", found \"{}\"",
+                    version.pre, comparator.pre
                 ));
             }
         }
@@ -96,9 +95,7 @@ pub fn version_matches_request(
 #[cfg(test)]
 mod tests {
     #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-    use semver_parser::range::parse as parse_request;
-    #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
-    use semver_parser::version::parse as parse_version;
+    use semver::{Version, VersionReq};
 
     #[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
     use super::*;
@@ -109,57 +106,57 @@ mod tests {
 
         #[test]
         fn implicit_compatible() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("1.2.3").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn compatible() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("^1.2.3").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("^1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn tilde() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("~1.2.3").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("~1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn no_patch() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("1.2").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("1.2").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn no_minor() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("1").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("1").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn multiple_predicates() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request(">= 1.2.3, < 2.0").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse(">= 1.2.3, < 2.0").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn unhandled_operator() {
-            let version = parse_version("1.2.3").unwrap();
-            let request = parse_request("< 2.0").unwrap();
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("< 2.0").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
         }
 
         #[test]
         fn bad_major() {
-            let version = parse_version("2.0.0").unwrap();
-            let request = parse_request("1.2.3").unwrap();
+            let version = Version::parse("2.0.0").unwrap();
+            let request = VersionReq::parse("1.2.3").unwrap();
             assert_eq!(
                 version_matches_request(&version, &request),
                 Err(String::from("expected major version 2, found 1"))
@@ -168,8 +165,8 @@ mod tests {
 
         #[test]
         fn bad_minor() {
-            let version = parse_version("1.3.0").unwrap();
-            let request = parse_request("1.2.3").unwrap();
+            let version = Version::parse("1.3.0").unwrap();
+            let request = VersionReq::parse("1.2.3").unwrap();
             assert_eq!(
                 version_matches_request(&version, &request),
                 Err(String::from("expected minor version 3, found 2"))
@@ -178,8 +175,8 @@ mod tests {
 
         #[test]
         fn bad_patch() {
-            let version = parse_version("1.2.4").unwrap();
-            let request = parse_request("1.2.3").unwrap();
+            let version = Version::parse("1.2.4").unwrap();
+            let request = VersionReq::parse("1.2.3").unwrap();
             assert_eq!(
                 version_matches_request(&version, &request),
                 Err(String::from("expected patch version 4, found 3"))
@@ -188,8 +185,8 @@ mod tests {
 
         #[test]
         fn bad_pre_release() {
-            let version = parse_version("1.2.3-rc2").unwrap();
-            let request = parse_request("1.2.3-rc1").unwrap();
+            let version = Version::parse("1.2.3-rc2").unwrap();
+            let request = VersionReq::parse("1.2.3-rc1").unwrap();
             assert_eq!(
                 version_matches_request(&version, &request),
                 Err(String::from("expected pre-release \"rc2\", found \"rc1\""))

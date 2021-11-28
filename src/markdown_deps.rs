@@ -1,8 +1,6 @@
 #![cfg(feature = "markdown_deps_updated")]
 use pulldown_cmark::{CodeBlockKind::Fenced, Event, Parser, Tag};
-use semver_parser::range::parse as parse_request;
-use semver_parser::range::VersionReq;
-use semver_parser::version::parse as parse_version;
+use semver::{Version, VersionReq};
 use toml::Value;
 
 use crate::helpers::{indent, read_file, version_matches_request, Result};
@@ -34,7 +32,7 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
                         .or_else(|| dep.as_str())
                 });
             match version {
-                Some(version) => parse_request(version)
+                Some(version) => VersionReq::parse(version)
                     .map_err(|err| format!("could not parse dependency: {}", err)),
                 None => Err(format!("no dependency on {}", pkg_name)),
             }
@@ -129,7 +127,7 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
 /// `stdout`.
 pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
-    let version = parse_version(pkg_version)
+    let version = Version::parse(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
 
     println!("Checking code blocks in {}...", path);
@@ -246,7 +244,7 @@ mod tests {
         let block = "[dependencies]\n\
                      foobar = '1.5'";
         let request = extract_version_request("foobar", block);
-        assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
+        assert_eq!(request.unwrap(), VersionReq::parse("1.5").unwrap());
     }
 
     #[test]
@@ -254,7 +252,7 @@ mod tests {
         let block = "[dependencies]\n\
                      foobar = { version = '1.5', default-features = false }";
         let request = extract_version_request("foobar", block);
-        assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
+        assert_eq!(request.unwrap(), VersionReq::parse("1.5").unwrap());
     }
 
     #[test]
@@ -264,7 +262,7 @@ mod tests {
         let block = "[dependencies]\n\
                      foobar = { git = 'https://example.net/foobar.git' }";
         let request = extract_version_request("foobar", block);
-        assert_eq!(request.unwrap(), parse_request("*").unwrap());
+        assert_eq!(request.unwrap(), VersionReq::parse("*").unwrap());
     }
 
     #[test]
@@ -272,7 +270,7 @@ mod tests {
         let block = "[dev-dependencies]\n\
                      foobar = '1.5'";
         let request = extract_version_request("foobar", block);
-        assert_eq!(request.unwrap(), parse_request("1.5").unwrap());
+        assert_eq!(request.unwrap(), VersionReq::parse("1.5").unwrap());
     }
 
     #[test]
@@ -283,7 +281,7 @@ mod tests {
         assert_eq!(
             request.unwrap_err(),
             "could not parse dependency: \
-             encountered unexpected token: AlphaNumeric(\"bad\")"
+             unexpected character 'b' while parsing patch version number"
         );
     }
 
@@ -333,7 +331,7 @@ mod tests {
         assert_eq!(
             check_markdown_deps("README.md", "foobar", "1.2"),
             Err(String::from(
-                "bad package version \"1.2\": expected more input"
+                "bad package version \"1.2\": unexpected end of input while parsing minor version number"
             ))
         );
     }
