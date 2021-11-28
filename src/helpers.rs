@@ -49,44 +49,41 @@ pub fn version_matches_request(
     request: &semver::VersionReq,
 ) -> Result<()> {
     use semver::Op;
-    if request.comparators.len() != 1 {
-        // Can only handle simple dependencies
-        return Ok(());
-    }
 
-    let comparator = &request.comparators[0];
-    match comparator.op {
-        Op::Tilde | Op::Caret => {
-            if comparator.major != version.major {
-                return Err(format!(
-                    "expected major version {}, found {}",
-                    version.major, comparator.major,
-                ));
-            }
-            if let Some(minor) = comparator.minor {
-                if minor != version.minor {
+    for comparator in &request.comparators {
+        match comparator.op {
+            Op::Tilde | Op::Caret | Op::Exact | Op::Greater | Op::GreaterEq | Op::Wildcard => {
+                if comparator.major != version.major {
                     return Err(format!(
-                        "expected minor version {}, found {}",
-                        version.minor, minor
+                        "expected major version {}, found {}",
+                        version.major, comparator.major,
+                    ));
+                }
+                if let Some(minor) = comparator.minor {
+                    if minor != version.minor {
+                        return Err(format!(
+                            "expected minor version {}, found {}",
+                            version.minor, minor
+                        ));
+                    }
+                }
+                if let Some(patch) = comparator.patch {
+                    if patch != version.patch {
+                        return Err(format!(
+                            "expected patch version {}, found {}",
+                            version.patch, patch
+                        ));
+                    }
+                }
+                if comparator.pre != version.pre {
+                    return Err(format!(
+                        "expected pre-release \"{}\", found \"{}\"",
+                        version.pre, comparator.pre
                     ));
                 }
             }
-            if let Some(patch) = comparator.patch {
-                if patch != version.patch {
-                    return Err(format!(
-                        "expected patch version {}, found {}",
-                        version.patch, patch
-                    ));
-                }
-            }
-            if comparator.pre != version.pre {
-                return Err(format!(
-                    "expected pre-release \"{}\", found \"{}\"",
-                    version.pre, comparator.pre
-                ));
-            }
+            _ => {} // We cannot check other operators.
         }
-        _ => return Ok(()), // We cannot check other operators.
     }
 
     Ok(())
@@ -109,6 +106,9 @@ mod tests {
             let version = Version::parse("1.2.3").unwrap();
             let request = VersionReq::parse("1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse("1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
         }
 
         #[test]
@@ -116,6 +116,9 @@ mod tests {
             let version = Version::parse("1.2.3").unwrap();
             let request = VersionReq::parse("^1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse("^1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
         }
 
         #[test]
@@ -123,6 +126,49 @@ mod tests {
             let version = Version::parse("1.2.3").unwrap();
             let request = VersionReq::parse("~1.2.3").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse("~1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
+        }
+
+        #[test]
+        fn exact() {
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("=1.2.3").unwrap();
+            assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse("=1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
+        }
+
+        #[test]
+        fn greater_or_equal() {
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse(">=1.2.3").unwrap();
+            assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse(">=1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
+        }
+
+        #[test]
+        fn wildcard() {
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse("1.2.*").unwrap();
+            assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse("1.3.*").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
+        }
+
+        #[test]
+        fn greater() {
+            let version = Version::parse("1.2.3").unwrap();
+            let request = VersionReq::parse(">1.2.3").unwrap();
+            assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse(">1.2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
         }
 
         #[test]
@@ -140,10 +186,13 @@ mod tests {
         }
 
         #[test]
-        fn multiple_predicates() {
+        fn multiple_comparators() {
             let version = Version::parse("1.2.3").unwrap();
             let request = VersionReq::parse(">= 1.2.3, < 2.0").unwrap();
             assert_eq!(version_matches_request(&version, &request), Ok(()));
+
+            let request = VersionReq::parse(">= 1.2.0, < 2.0").unwrap();
+            assert!(version_matches_request(&version, &request).is_err());
         }
 
         #[test]
