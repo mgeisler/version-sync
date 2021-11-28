@@ -1,7 +1,5 @@
 #![cfg(feature = "html_root_url_updated")]
-use semver_parser::range::parse as parse_request;
-use semver_parser::version::parse as parse_version;
-use semver_parser::version::Version;
+use semver::{Version, VersionReq};
 use syn::spanned::Spanned;
 use url::Url;
 
@@ -51,7 +49,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
         //
         // [1]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html
         // #crate-sets-html_root_url-attribute-c-html-root
-        parse_request(request)
+        VersionReq::parse(request)
             .map_err(|err| format!("could not parse version in URL: {}", err))
             .and_then(|request| version_matches_request(version, &request))
     }
@@ -71,7 +69,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 /// printed on `stdout`.
 pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
     let code = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
-    let version = parse_version(pkg_version)
+    let version = Version::parse(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
     let krate: syn::File = syn::parse_file(&code)
         .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
@@ -150,7 +148,7 @@ mod test_url_matches {
 
     #[test]
     fn good_url() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo/1.2.3", "foo", &ver),
             Ok(())
@@ -159,7 +157,7 @@ mod test_url_matches {
 
     #[test]
     fn trailing_slash() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo/1.2.3/", "foo", &ver),
             Ok(())
@@ -168,25 +166,25 @@ mod test_url_matches {
 
     #[test]
     fn without_patch() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(url_matches("https://docs.rs/foo/1.2", "foo", &ver), Ok(()));
     }
 
     #[test]
     fn without_minor() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(url_matches("https://docs.rs/foo/1", "foo", &ver), Ok(()));
     }
 
     #[test]
     fn different_domain() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(url_matches("https://example.net/foo/", "bar", &ver), Ok(()));
     }
 
     #[test]
     fn different_domain_http() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("http://example.net/foo/1.2.3", "foo", &ver),
             Ok(())
@@ -195,7 +193,7 @@ mod test_url_matches {
 
     #[test]
     fn http_url() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("http://docs.rs/foo/1.2.3", "foo", &ver),
             Err(String::from("expected \"https\", found \"http\""))
@@ -204,7 +202,7 @@ mod test_url_matches {
 
     #[test]
     fn bad_scheme() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("mailto:foo@example.net", "foo", &ver),
             Err(String::from("expected \"https\", found \"mailto\""))
@@ -213,7 +211,7 @@ mod test_url_matches {
 
     #[test]
     fn no_package() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs", "foo", &ver),
             Err(String::from("missing package name"))
@@ -222,7 +220,7 @@ mod test_url_matches {
 
     #[test]
     fn no_package_trailing_slash() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/", "foo", &ver),
             Err(String::from("missing package name"))
@@ -231,7 +229,7 @@ mod test_url_matches {
 
     #[test]
     fn no_version() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo", "foo", &ver),
             Err(String::from("missing version number"))
@@ -240,7 +238,7 @@ mod test_url_matches {
 
     #[test]
     fn no_version_trailing_slash() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo/", "foo", &ver),
             Err(String::from("missing version number"))
@@ -249,7 +247,7 @@ mod test_url_matches {
 
     #[test]
     fn bad_url() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("docs.rs/foo/bar", "foo", &ver),
             Err(String::from("parse error: relative URL without a base"))
@@ -258,19 +256,19 @@ mod test_url_matches {
 
     #[test]
     fn bad_pkg_version() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo/1.2.bad/", "foo", &ver),
             Err(String::from(
                 "could not parse version in URL: \
-                 encountered unexpected token: AlphaNumeric(\"bad\")"
+                 unexpected character 'b' while parsing patch version number"
             ))
         );
     }
 
     #[test]
     fn wrong_pkg_name() {
-        let ver = parse_version("1.2.3").unwrap();
+        let ver = Version::parse("1.2.3").unwrap();
         assert_eq!(
             url_matches("https://docs.rs/foo/1.2.3/", "bar", &ver),
             Err(String::from("expected package \"bar\", found \"foo\""))
@@ -302,7 +300,7 @@ mod test_check_html_root_url {
         assert_eq!(
             check_html_root_url("src/lib.rs", "foobar", "1.2"),
             Err(String::from(
-                "bad package version \"1.2\": expected more input"
+                "bad package version \"1.2\": unexpected end of input while parsing minor version number"
             ))
         );
     }
