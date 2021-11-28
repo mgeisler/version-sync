@@ -32,7 +32,7 @@ pub fn check_contains_substring(
 
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for \"{}\" in {}...", template, path);
+    println!("Searching for \"{}\" in {}...", pattern, path);
     match text.find(&pattern) {
         Some(idx) => {
             let line_no = text[..idx].lines().count();
