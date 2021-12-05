@@ -43,7 +43,11 @@ pub fn indent(text: &str) -> String {
 }
 
 /// Verify that the version range request matches the given version.
-#[cfg(any(feature = "html_root_url_updated", feature = "markdown_deps_updated"))]
+#[cfg(any(
+    feature = "html_root_url_updated",
+    feature = "markdown_deps_updated",
+    feature = "contains_regex"
+))]
 pub fn version_matches_request(
     version: &semver::Version,
     request: &semver::VersionReq,

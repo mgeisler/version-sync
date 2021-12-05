@@ -94,7 +94,7 @@ jobs:
         run: |
           git commit --all -m "Update changelog for version ${{ needs.setup.outputs.new-version }}"
 
-      - name: Update TOML code blocks
+      - name: Update README version numbers
         run: |
           import fileinput, re, sys
 
@@ -103,6 +103,8 @@ jobs:
           MAJOR_MINOR = '.'.join(NEW_VERSION.split('.')[:2])
 
           for line in fileinput.input(inplace=True):
+              line = re.sub(f'https://docs.rs/{NAME}/[^/]+/',
+                            f'https://docs.rs/{NAME}/{NEW_VERSION}/', line)
               line = re.sub(f'{NAME} = "[^"]+"',
                             f'{NAME} = "{MAJOR_MINOR}"', line)
               line = re.sub(f'{NAME} = {{ version = "[^"]+"',
