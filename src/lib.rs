@@ -67,7 +67,10 @@
 //! * `html_root_url_updated` enables [`assert_html_root_url_updated`].
 //! * `contains_regex` enables [`assert_contains_regex`].
 //!
-//! All of these features are enabled by default.
+//! All of these features are enabled by default. If you disable all
+//! of them, you can still use [`assert_contains_substring`] to
+//! quickly check that a given file contains the current crate
+//! version.
 //!
 //! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 //! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
