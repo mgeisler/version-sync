@@ -1,5 +1,5 @@
 #![cfg(feature = "contains_regex")]
-use regex::{escape, Regex};
+use regex::{escape, RegexBuilder};
 
 use crate::helpers::{read_file, Result};
 
@@ -25,38 +25,25 @@ pub fn check_contains_regex(
     pkg_name: &str,
     pkg_version: &str,
 ) -> Result<()> {
-    // Expand the optional {name} and {version} placeholders in the
-    // template. This is almost like
-    //
-    //   format!(template, name = pkg_name, version = pkg_version)
-    //
-    // but allows the user to leave out unnecessary placeholders.
-    let orig_regex = template
+    // Expand the placeholders in the template.
+    let pattern = template
         .replace("{name}", &escape(pkg_name))
         .replace("{version}", &escape(pkg_version));
-
-    // We start by constructing a Regex from the original string. This
-    // ensurs that any errors refer to the string the user passed
-    // instead of the string we use internally.
-    let re = match Regex::new(&orig_regex) {
-        Ok(_) => {
-            // We now know that the regex is valid, so we can enable
-            // multi-line mode by prepending "(?m)".
-            let regex = String::from("(?m)") + &orig_regex;
-            Regex::new(&regex).unwrap()
-        }
-        Err(err) => return Err(format!("could not parse template: {}", err)),
-    };
+    let mut builder = RegexBuilder::new(&pattern);
+    builder.multi_line(true);
+    let re = builder
+        .build()
+        .map_err(|err| format!("could not parse template: {}", err))?;
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for \"{}\" in {}...", orig_regex, path);
+    println!("Searching for \"{}\" in {}...", pattern, path);
     match re.find(&text) {
         Some(m) => {
             let line_no = text[..m.start()].lines().count();
             println!("{} (line {}) ... ok", path, line_no + 1);
             Ok(())
         }
-        None => Err(format!("could not find \"{}\" in {}", orig_regex, path)),
+        None => Err(format!("could not find \"{}\" in {}", pattern, path)),
     }
 }
 
