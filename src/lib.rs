@@ -73,9 +73,6 @@
 //! version.
 //!
 //! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
-//! [`assert_markdown_deps_updated`]: macro.assert_markdown_deps_updated.html
-//! [`assert_html_root_url_updated`]: macro.assert_html_root_url_updated.html
-//! [`assert_contains_regex`]: macro.assert_contains_regex.html
 
 #![doc(html_root_url = "https://docs.rs/version-sync/0.9.3")]
 #![forbid(unsafe_code)]
