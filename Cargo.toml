@@ -15,7 +15,7 @@ edition = "2018"
 default = ["markdown_deps_updated", "html_root_url_updated", "contains_regex"]
 markdown_deps_updated = ["pulldown-cmark", "semver", "toml"]
 html_root_url_updated = ["url", "semver", "syn", "proc-macro2"]
-contains_regex = ["regex"]
+contains_regex = ["regex", "semver"]
 
 [dependencies]
 pulldown-cmark = { version = "0.8", default-features = false, optional = true }
