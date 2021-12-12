@@ -273,7 +273,7 @@ Contributions will be accepted under the same license.
 [build-status]: https://github.com/mgeisler/version-sync/actions?query=workflow%3Abuild+branch%3Amaster
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
 [crates-io]: https://crates.io/crates/version-sync
-[api-docs]: https://docs.rs/version-sync/0.9.3/
+[api-docs]: https://docs.rs/version-sync/0.9.4/
 [rust-2018]: https://doc.rust-lang.org/edition-guide/rust-2018/
 [mit]: LICENSE
 [issue-17]: https://github.com/mgeisler/version-sync/issues/17
