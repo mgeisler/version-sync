@@ -108,6 +108,17 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.9.4 — 2021-12-14
+
+* [#114](https://github.com/mgeisler/version-sync/pull/114): Move from
+  deprecated the `semver-parser` crate to `semver`.
+* [#115](https://github.com/mgeisler/version-sync/pull/115): Expand
+  `assert_markdown_deps_updated!` to also check version numbers such
+  as `=1.2.3`, `>1.2.3`, and `>=1.2.3`.
+* [#119](https://github.com/mgeisler/version-sync/pull/119): Add new
+  `assert_only_contains_regex!` macro which can ensure that all
+  version numbers in a file are updated.
+
 ### Version 0.9.3 — 2021-09-20
 
 * [#108](https://github.com/mgeisler/version-sync/pull/108): Make all
