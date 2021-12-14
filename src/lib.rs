@@ -78,7 +78,7 @@
 //!
 //! [`html_root_url`]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html#crate-sets-html_root_url-attribute-c-html-root
 
-#![doc(html_root_url = "https://docs.rs/version-sync/0.9.3")]
+#![doc(html_root_url = "https://docs.rs/version-sync/0.9.4")]
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
