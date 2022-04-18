@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
 license = "MIT"
-edition = "2018"
+edition = "2021"
 
 [features]
 default = ["markdown_deps_updated", "html_root_url_updated", "contains_regex"]
