@@ -1,6 +1,7 @@
 #![cfg(feature = "html_root_url_updated")]
 use semver::{Version, VersionReq};
 use syn::spanned::Spanned;
+use syn::token;
 use url::Url;
 
 use crate::helpers::{indent, read_file, version_matches_request, Result};
@@ -79,63 +80,65 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
         if let syn::AttrStyle::Outer = attr.style {
             continue;
         }
-        let (attr_path, nested_meta_items) = match attr.parse_meta() {
-            Ok(syn::Meta::List(syn::MetaList { path, nested, .. })) => (path, nested),
-            _ => continue,
-        };
 
-        if !attr_path.is_ident("doc") {
+        if !attr.path().is_ident("doc") {
             continue;
         }
 
-        for nested_meta_item in nested_meta_items {
-            let meta_item = match nested_meta_item {
-                syn::NestedMeta::Meta(ref meta_item) => meta_item,
-                _ => continue,
-            };
+        if let syn::Meta::List(ref list) = attr.meta {
+            list.parse_nested_meta(|meta| {
+                if meta.path.is_ident("html_root_url") {
+                    let check_result = match meta.value() {
+                        Ok(value) => match value.parse()? {
+                            syn::Lit::Str(ref s) => url_matches(&s.value(), pkg_name, &version),
+                            _ => return Ok(()),
+                        },
+                        Err(_err) => Err(String::from("html_root_url attribute without URL")),
+                    };
 
-            let check_result = match *meta_item {
-                syn::Meta::NameValue(syn::MetaNameValue {
-                    ref path, ref lit, ..
-                }) if path.is_ident("html_root_url") => {
-                    match *lit {
-                        // Accept both cooked and raw strings here.
-                        syn::Lit::Str(ref s) => url_matches(&s.value(), pkg_name, &version),
-                        // A non-string html_root_url is probably an
-                        // error, but we leave this check to the
-                        // compiler.
-                        _ => continue,
+                    // FIXME: the proc-macro2-0.4.27 crate hides accurate span
+                    // information behind a procmacro2_semver_exempt flag: the
+                    // start line is correct, but the end line is always equal
+                    // to the start. Luckily, most html_root_url attributes
+                    // are on a single line, so the code below works okay.
+                    let first_line = attr.span().start().line;
+                    let last_line = attr.span().end().line;
+                    // Getting the source code for a span is tracked upstream:
+                    // https://github.com/alexcrichton/proc-macro2/issues/110.
+                    let source_lines = code.lines().take(last_line).skip(first_line - 1);
+                    match check_result {
+                        Ok(()) => {
+                            println!("{} (line {}) ... ok", path, first_line);
+                            return Ok(());
+                        }
+                        Err(err) => {
+                            println!("{} (line {}) ... {} in", path, first_line, err);
+                            for line in source_lines {
+                                println!("{}", indent(line));
+                            }
+                            return Err(meta.error(format!("html_root_url errors in {}", path)));
+                        }
                     }
                 }
-                syn::Meta::Path(ref path) if path.is_ident("html_root_url") => {
-                    Err(String::from("html_root_url attribute without URL"))
-                }
-                _ => continue,
-            };
-
-            // FIXME: the proc-macro2-0.4.27 crate hides accurate span
-            // information behind a procmacro2_semver_exempt flag: the
-            // start line is correct, but the end line is always equal
-            // to the start. Luckily, most html_root_url attributes
-            // are on a single line, so the code below works okay.
-            let first_line = attr.span().start().line;
-            let last_line = attr.span().end().line;
-            // Getting the source code for a span is tracked upstream:
-            // https://github.com/alexcrichton/proc-macro2/issues/110.
-            let source_lines = code.lines().take(last_line).skip(first_line - 1);
-            match check_result {
-                Ok(()) => {
-                    println!("{} (line {}) ... ok", path, first_line);
-                    return Ok(());
-                }
-                Err(err) => {
-                    println!("{} (line {}) ... {} in", path, first_line, err);
-                    for line in source_lines {
-                        println!("{}", indent(line));
+                // Need to advance the input stream by parsing it.
+                // Otherwise syn gets stuck parsing the wrong tokens.
+                else if meta.input.peek(token::Eq) {
+                    let value = meta.value()?;
+                    value.parse::<proc_macro2::TokenTree>()?;
+                } else if meta.input.peek(token::Paren) {
+                    let value;
+                    syn::parenthesized!(value in meta.input);
+                    // There can be multiple elements before end.
+                    while !value.is_empty() {
+                        value.parse::<proc_macro2::TokenTree>()?;
                     }
-                    return Err(format!("html_root_url errors in {}", path));
+                } else {
+                    return Err(meta.error("unknown doc attribute"));
                 }
-            }
+
+                Ok(())
+            })
+            .map_err(|err| err.to_string())?;
         }
     }
 
