@@ -1,5 +1,6 @@
 #![cfg(feature = "markdown_deps_updated")]
-use pulldown_cmark::{CodeBlockKind::Fenced, Event, Parser, Tag};
+use pulldown_cmark::CodeBlockKind::Fenced;
+use pulldown_cmark::{Event, Parser, Tag};
 use semver::{Version, VersionReq};
 use toml::Value;
 
