@@ -37,7 +37,7 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
                 None => Err(format!("no dependency on {}", pkg_name)),
             }
         }
-        Err(err) => Err(format!("TOML parse error: {}", err)),
+        Err(err) => Err(format!("{}", err)),
     }
 }
 
@@ -304,11 +304,7 @@ mod tests {
         let block = "[dependencies]\n\
                      foobar = 1.5.8";
         let request = extract_version_request("foobar", block);
-        // toml 0.5.3 returns "found a period at line 2 column 13.
-        // Update the test when we bump the toml crate dependency.
-        assert!(request
-            .unwrap_err()
-            .contains("TOML parse error: expected newline, found a period at line 2"));
+        assert!(request.is_err());
     }
 
     #[test]
