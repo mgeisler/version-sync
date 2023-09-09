@@ -31,6 +31,8 @@ jobs:
       - name: Install ${{ matrix.rust }} Rust
         run: rustup default ${{ matrix.rust }}
 
+      - uses: Swatinem/rust-cache@v2
+
         # Verify that features work by themselves
         # Features should not interfere with each other
 
