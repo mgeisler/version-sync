@@ -53,14 +53,14 @@ pub fn check_contains_regex(
         .map_err(|err| format!("could not parse template: {}", err))?;
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for \"{}\" in {}...", pattern, path);
+    println!("Searching for \"{pattern}\" in {path}...");
     match re.find(&text) {
         Some(m) => {
             let line_no = text[..m.start()].lines().count();
             println!("{} (line {}) ... ok", path, line_no + 1);
             Ok(())
         }
-        None => Err(format!("could not find \"{}\" in {}", pattern, path)),
+        None => Err(format!("could not find \"{pattern}\" in {path}")),
     }
 }
 
@@ -113,11 +113,11 @@ pub fn check_only_contains_regex(
         .build()
         .map_err(|err| format!("could not parse template: {}", err))?;
 
-    let semver_re = Regex::new(&SEMVER_RE).unwrap();
+    let semver_re = Regex::new(SEMVER_RE).unwrap();
 
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for \"{}\" in {}...", template, path);
+    println!("Searching for \"{template}\" in {path}...");
     let mut errors = 0;
     let mut has_match = false;
 
@@ -142,7 +142,7 @@ pub fn check_only_contains_regex(
                     );
                 }
                 Ok(()) => {
-                    println!("{} (line {}) ... ok", path, line_no);
+                    println!("{path} (line {line_no}) ... ok");
                 }
             }
         }
@@ -150,16 +150,15 @@ pub fn check_only_contains_regex(
 
     if !has_match {
         return Err(format!(
-            "{} ... found no matches for \"{}\"",
-            path, template
+            "{path} ... found no matches for \"{template}\""
         ));
     }
 
     if errors > 0 {
-        return Err(format!("{} ... found {} errors", path, errors));
+        return Err(format!("{path} ... found {errors} errors"));
     }
 
-    return Ok(());
+    Ok(())
 }
 
 #[cfg(test)]
@@ -173,15 +172,13 @@ mod tests {
         // the (?m) prefix.
         assert_eq!(
             check_contains_regex("README.md", "Version {version} [ups", "foobar", "1.2.3"),
-            Err(String::from(
-                [
+            Err([
                     r"could not parse template: regex parse error:",
                     r"    Version 1\.2\.3 [ups",
                     r"                    ^",
                     r"error: unclosed character class"
                 ]
-                .join("\n")
-            ))
+                .join("\n"))
         )
     }
 
@@ -204,13 +201,11 @@ mod tests {
                 "foo*bar",
                 "1.2.3"
             ),
-            Err(String::from(
-                [
+            Err([
                     r#"could not find "escaped: foo\*bar-1\.2\.3,"#,
                     r#"not escaped: foo*bar-1.2.3" in README.md"#
                 ]
-                .join(" ")
-            ))
+                .join(" "))
         )
     }
 
@@ -244,7 +239,7 @@ mod tests {
         // users call check_only_contains_regex with a string like
         // "foo {version}" which also contains more than just
         // "{version}".
-        let re = Regex::new(&format!("^{}$", SEMVER_RE)).unwrap();
+        let re = Regex::new(&format!("^{SEMVER_RE}$")).unwrap();
         assert!(re.is_match("1.2.3"));
         assert!(re.is_match("1.2"));
         assert!(re.is_match("1"));

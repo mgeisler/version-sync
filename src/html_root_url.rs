@@ -39,8 +39,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
     // Finally, we check that the package name and version matches.
     if name != pkg_name {
         Err(format!(
-            "expected package \"{}\", found \"{}\"",
-            pkg_name, name
+            "expected package \"{pkg_name}\", found \"{name}\""
         ))
     } else {
         // The Rust API Guidelines[1] suggest using an exact version
@@ -75,7 +74,7 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     let krate: syn::File = syn::parse_file(&code)
         .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
 
-    println!("Checking doc attributes in {}...", path);
+    println!("Checking doc attributes in {path}...");
     for attr in krate.attrs {
         if let syn::AttrStyle::Outer = attr.style {
             continue;
@@ -290,7 +289,7 @@ mod test_check_html_root_url {
         } else {
             "The system cannot find the file specified. (os error 2)"
         };
-        let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
+        let errmsg = format!("could not read no-such-file.md: {no_such_file}");
         assert_eq!(
             check_html_root_url("no-such-file.md", "foobar", "1.2.3"),
             Err(errmsg)
