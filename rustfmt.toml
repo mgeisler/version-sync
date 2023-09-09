@@ -1,0 +1,3 @@
+edition = "2018"
+# https://github.com/rust-lang/rustfmt/issues/4991
+imports_granularity = "Module"
