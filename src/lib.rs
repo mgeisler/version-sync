@@ -146,14 +146,17 @@ macro_rules! assert_markdown_deps_updated {
 
 /// Assert that the `html_root_url` attribute is up to date.
 ///
-/// Library code is [expected to set `html_root_url`][api-guidelines]
-/// to point to docs.rs so that rustdoc can generate correct links
-/// when referring to this crate.
+/// Library crates can [set `html_root_url`][api-guidelines] to point
+/// to their documentation so that `cargo doc --no-deps` in other
+/// projects can generate correct links when referring the library.
 ///
 /// The macro will call [`check_html_root_url`] on the file name given
 /// in order to check that the `html_root_url` is points to the
-/// current version of your package documentation on docs.rs. The
-/// package name is automatically taken from the `$CARGO_PKG_NAME`
+/// current version of your package documentation on docs.rs. Use
+/// [`assert_contains_regex!`] instead if you don't host the
+/// documentation on docs.rs.
+///
+/// The package name is automatically taken from the `$CARGO_PKG_NAME`
 /// environment variable and the version is taken from
 /// `$CARGO_PKG_VERSION`. These environment variables are
 /// automatically set by Cargo when compiling your crate.
