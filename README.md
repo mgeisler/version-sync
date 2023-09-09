@@ -110,8 +110,6 @@ This is a changelog describing the most important changes per release.
 
 ### Version 0.9.4 — 2021-12-14
 
-* [#114](https://github.com/mgeisler/version-sync/pull/114): Move from
-  deprecated the `semver-parser` crate to `semver`.
 * [#115](https://github.com/mgeisler/version-sync/pull/115): Expand
   `assert_markdown_deps_updated!` to also check version numbers such
   as `=1.2.3`, `>1.2.3`, and `>=1.2.3`.
@@ -134,10 +132,6 @@ This is a changelog describing the most important changes per release.
   pulldown-cmark to 0.8.
 * [#95](https://github.com/mgeisler/version-sync/pull/95): Fix
   `non_fmt_panic` lint error in latest nightly.
-* [#100](https://github.com/mgeisler/version-sync/pull/100): Setup
-  weekly build to catch errors on nightly Rust.
-* [#101](https://github.com/mgeisler/version-sync/pull/101): Forbid
-  warnings when building in CI.
 
 ### Version 0.9.1 — 2020-07-07
 
@@ -149,18 +143,9 @@ This is a changelog describing the most important changes per release.
 ### Version 0.9.0 — 2020-03-30
 
 Drop support for Rust 1.31.0 since our dependencies keep releasing new
-patch versions that push up the minimum required Rust version. These
-updates mean that version-sync 0.8.1 no longer compiles with Rust
-1.31.0 because `cargo sync` will pull in too new versions of the
-direct and transitive dependencies. This happens even if there are no
-changes in version-sync.
-
-The constant build failures in our CI makes it infeasible to keep
-version-sync compatible with any particular version of Rust. We will
-therefore track the latest stable version of Rust from now on.
-
-At the time of writing, the code compiles with Rust 1.36, but this
-will likely become outdated soon.
+patch versions that push up the minimum required Rust version. At the
+time of writing, the code compiles with Rust 1.36, but this will
+likely become outdated soon.
 
 Issues closed:
 
