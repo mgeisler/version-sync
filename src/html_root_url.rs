@@ -170,13 +170,13 @@ mod test_url_matches {
     #[test]
     fn without_patch() {
         let ver = Version::parse("1.2.3").unwrap();
-        assert_eq!(url_matches("https://docs.rs/foo/1.2", "foo", &ver), Ok(()));
+        assert_eq!(url_matches("https://docs.rs/foo/1.2/", "foo", &ver), Ok(()));
     }
 
     #[test]
     fn without_minor() {
         let ver = Version::parse("1.2.3").unwrap();
-        assert_eq!(url_matches("https://docs.rs/foo/1", "foo", &ver), Ok(()));
+        assert_eq!(url_matches("https://docs.rs/foo/1/", "foo", &ver), Ok(()));
     }
 
     #[test]
