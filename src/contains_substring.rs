@@ -27,19 +27,19 @@ pub fn check_contains_substring(
     //
     // but allows the user to leave out unnecessary placeholders.
     let pattern = template
-        .replace("{name}", &pkg_name)
-        .replace("{version}", &pkg_version);
+        .replace("{name}", pkg_name)
+        .replace("{version}", pkg_version);
 
     let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
 
-    println!("Searching for \"{}\" in {}...", pattern, path);
+    println!("Searching for \"{pattern}\" in {path}...");
     match text.find(&pattern) {
         Some(idx) => {
             let line_no = text[..idx].lines().count();
             println!("{} (line {}) ... ok", path, line_no + 1);
             Ok(())
         }
-        None => Err(format!("could not find \"{}\" in {}", pattern, path)),
+        None => Err(format!("could not find \"{pattern}\" in {path}")),
     }
 }
 

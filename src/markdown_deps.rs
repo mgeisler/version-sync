@@ -34,10 +34,10 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
             match version {
                 Some(version) => VersionReq::parse(version)
                     .map_err(|err| format!("could not parse dependency: {}", err)),
-                None => Err(format!("no dependency on {}", pkg_name)),
+                None => Err(format!("no dependency on {pkg_name}")),
             }
         }
-        Err(err) => Err(format!("{}", err)),
+        Err(err) => Err(format!("{err}")),
     }
 }
 
@@ -130,7 +130,7 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     let version = Version::parse(pkg_version)
         .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
 
-    println!("Checking code blocks in {}...", path);
+    println!("Checking code blocks in {path}...");
     let mut failed = false;
     for block in find_toml_blocks(&text) {
         let result = extract_version_request(pkg_name, &block.content)
@@ -146,7 +146,7 @@ pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Res
     }
 
     if failed {
-        return Err(format!("dependency errors in {}", path));
+        return Err(format!("dependency errors in {path}"));
     }
     Ok(())
 }
@@ -195,7 +195,7 @@ mod tests {
                     ```\n\
                     Trailing text";
         assert_eq!(
-            find_toml_blocks(&text),
+            find_toml_blocks(text),
             vec![CodeBlock {
                 content: String::from("foo\n"),
                 first_line: 3
@@ -215,7 +215,7 @@ mod tests {
                     > ```\n\
                     ";
         assert_eq!(
-            find_toml_blocks(&text),
+            find_toml_blocks(text),
             vec![CodeBlock {
                 content: String::from("foo\n\n  bar\n\n"),
                 first_line: 4
@@ -314,7 +314,7 @@ mod tests {
         } else {
             "The system cannot find the file specified. (os error 2)"
         };
-        let errmsg = format!("could not read no-such-file.md: {}", no_such_file);
+        let errmsg = format!("could not read no-such-file.md: {no_such_file}");
         assert_eq!(
             check_markdown_deps("no-such-file.md", "foobar", "1.2.3"),
             Err(errmsg)
