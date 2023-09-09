@@ -2,14 +2,14 @@
 name = "version-sync"
 version = "0.9.4"
 authors = ["Martin Geisler <martin@geisler.net>"]
-description = "Crate for ensuring that version numbers in README files and other files are kept in sync with the crate version."
-documentation = "https://docs.rs/version-sync/"
-repository = "https://github.com/mgeisler/version-sync"
-readme = "README.md"
-keywords = ["version"]
 categories = ["development-tools", "rust-patterns"]
-license = "MIT"
+documentation = "https://docs.rs/version-sync/"
 edition = "2021"
+keywords = ["version"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/mgeisler/version-sync"
+description = "Crate for ensuring that version numbers in README files and other files are kept in sync with the crate version."
 
 [features]
 default = ["markdown_deps_updated", "html_root_url_updated", "contains_regex"]
@@ -18,13 +18,13 @@ html_root_url_updated = ["url", "semver", "syn", "proc-macro2"]
 contains_regex = ["regex", "semver"]
 
 [dependencies]
+proc-macro2 = { version = "1.0.36", default-features = false, features = ["span-locations"], optional = true }
 pulldown-cmark = { version = "0.9.1", default-features = false, optional = true }
+regex = { version = "1.5.4", default-features = false, features = ["std", "unicode"], optional = true }
 semver = { version = "1.0.5", optional = true }
 syn = { version = "2.0.15", default-features = false, features = ["parsing", "printing", "full"], optional = true }
-proc-macro2 = { version = "1.0.36", default-features = false, features = ["span-locations"], optional = true }
 toml = { version = "0.7.8", optional = true }
 url = { version = "2.2.2", optional = true }
-regex = { version = "1.5.4", default-features = false, features = ["std", "unicode"], optional = true }
 
 [dev-dependencies]
 tempfile = "3.3.0"

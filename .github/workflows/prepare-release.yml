@@ -3,7 +3,7 @@ name: Prepare Release PR
 on:
   push:
     branches:
-      - 'release-*'
+      - "release-*"
 
 jobs:
   prepare-release:
