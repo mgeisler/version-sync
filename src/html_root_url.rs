@@ -38,9 +38,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 
     // Finally, we check that the package name and version matches.
     if name != pkg_name {
-        Err(format!(
-            "expected package \"{pkg_name}\", found \"{name}\""
-        ))
+        Err(format!("expected package \"{pkg_name}\", found \"{name}\""))
     } else {
         // The Rust API Guidelines[1] suggest using an exact version
         // number, but we have relaxed this a little and allow the

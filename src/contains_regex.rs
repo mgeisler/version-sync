@@ -149,9 +149,7 @@ pub fn check_only_contains_regex(
     }
 
     if !has_match {
-        return Err(format!(
-            "{path} ... found no matches for \"{template}\""
-        ));
+        return Err(format!("{path} ... found no matches for \"{template}\""));
     }
 
     if errors > 0 {
@@ -173,12 +171,12 @@ mod tests {
         assert_eq!(
             check_contains_regex("README.md", "Version {version} [ups", "foobar", "1.2.3"),
             Err([
-                    r"could not parse template: regex parse error:",
-                    r"    Version 1\.2\.3 [ups",
-                    r"                    ^",
-                    r"error: unclosed character class"
-                ]
-                .join("\n"))
+                r"could not parse template: regex parse error:",
+                r"    Version 1\.2\.3 [ups",
+                r"                    ^",
+                r"error: unclosed character class"
+            ]
+            .join("\n"))
         )
     }
 
@@ -202,10 +200,10 @@ mod tests {
                 "1.2.3"
             ),
             Err([
-                    r#"could not find "escaped: foo\*bar-1\.2\.3,"#,
-                    r#"not escaped: foo*bar-1.2.3" in README.md"#
-                ]
-                .join(" "))
+                r#"could not find "escaped: foo\*bar-1\.2\.3,"#,
+                r#"not escaped: foo*bar-1.2.3" in README.md"#
+            ]
+            .join(" "))
         )
     }
 
