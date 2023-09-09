@@ -109,6 +109,17 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
+### Version 0.9.5 (2023-09-09)
+
+- [#122](https://github.com/mgeisler/version-sync/pull/122): Use precise
+  dependency versions in `Cargo.toml`.
+- [#123](https://github.com/mgeisler/version-sync/pull/123): Migrate to the Rust
+  2021 edition.
+- [#126](https://github.com/mgeisler/version-sync/pull/126): Update syn to
+  latest version.
+- [#127](https://github.com/mgeisler/version-sync/pull/127): Update toml to
+  latest version.
+
 ### Version 0.9.4 (2021-12-14)
 
 - [#115](https://github.com/mgeisler/version-sync/pull/115): Expand
