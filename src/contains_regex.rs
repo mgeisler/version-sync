@@ -165,6 +165,7 @@ pub fn check_only_contains_regex(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::io::Write;
 
     #[test]
     fn bad_regex() {
@@ -227,7 +228,6 @@ mod tests {
         // (https://github.com/rust-lang/regex/issues/244), so
         // version-sync makes sure to normalize \r\n to \n when
         // reading files.
-        use std::io::Write;
         let mut file = tempfile::NamedTempFile::new().unwrap();
 
         file.write_all(b"first line\r\nsecond line\r\nthird line\r\n")
@@ -255,7 +255,6 @@ mod tests {
 
     #[test]
     fn only_contains_success() {
-        use std::io::Write;
         let mut file = tempfile::NamedTempFile::new().unwrap();
         file.write_all(
             b"first:  docs.rs/foo/1.2.3/foo/fn.bar.html
@@ -276,7 +275,6 @@ mod tests {
 
     #[test]
     fn only_contains_success_compatible() {
-        use std::io::Write;
         let mut file = tempfile::NamedTempFile::new().unwrap();
         file.write_all(
             b"first:  docs.rs/foo/1.2/foo/fn.bar.html
@@ -297,7 +295,6 @@ mod tests {
 
     #[test]
     fn only_contains_failure() {
-        use std::io::Write;
         let mut file = tempfile::NamedTempFile::new().unwrap();
         file.write_all(
             b"first:  docs.rs/foo/1.0.0/foo/ <- error
@@ -319,7 +316,6 @@ mod tests {
 
     #[test]
     fn only_contains_fails_if_no_match() {
-        use std::io::Write;
         let mut file = tempfile::NamedTempFile::new().unwrap();
         file.write_all(b"not a match").unwrap();
 
