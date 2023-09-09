@@ -109,7 +109,18 @@ your_crate = "0.1.2"
 
 This is a changelog describing the most important changes per release.
 
-### Version 0.9.4 — 2021-12-14
+### Version 0.9.5 (2023-09-09)
+
+- [#122](https://github.com/mgeisler/version-sync/pull/122): Use precise
+  dependency versions in `Cargo.toml`.
+- [#123](https://github.com/mgeisler/version-sync/pull/123): Migrate to the Rust
+  2021 edition.
+- [#126](https://github.com/mgeisler/version-sync/pull/126): Update syn to
+  latest version.
+- [#127](https://github.com/mgeisler/version-sync/pull/127): Update toml to
+  latest version.
+
+### Version 0.9.4 (2021-12-14)
 
 - [#115](https://github.com/mgeisler/version-sync/pull/115): Expand
   `assert_markdown_deps_updated!` to also check version numbers such as
@@ -118,7 +129,7 @@ This is a changelog describing the most important changes per release.
   `assert_only_contains_regex!` macro which can ensure that all version numbers
   in a file are updated.
 
-### Version 0.9.3 — 2021-09-20
+### Version 0.9.3 (2021-09-20)
 
 - [#108](https://github.com/mgeisler/version-sync/pull/108): Make all
   dependencies optional. Thanks @rlee287!
@@ -127,21 +138,21 @@ This is a changelog describing the most important changes per release.
 - [#110](https://github.com/mgeisler/version-sync/pull/110): Add simple
   `check_contains_version` function.
 
-### Version 0.9.2 — 2021-02-13
+### Version 0.9.2 (2021-02-13)
 
 - [#94](https://github.com/mgeisler/version-sync/pull/94): Update pulldown-cmark
   to 0.8.
 - [#95](https://github.com/mgeisler/version-sync/pull/95): Fix `non_fmt_panic`
   lint error in latest nightly.
 
-### Version 0.9.1 — 2020-07-07
+### Version 0.9.1 (2020-07-07)
 
 - [#91](https://github.com/mgeisler/version-sync/pull/91): Pull in fewer
   dependencies. This optimizes the build time by 1-2 seconds.
 - [#92](https://github.com/mgeisler/version-sync/pull/92): Normalize `\r\n` to
   `\n` to ensure `^` and `$` always match line boundaries.
 
-### Version 0.9.0 — 2020-03-30
+### Version 0.9.0 (2020-03-30)
 
 Drop support for Rust 1.31.0 since our dependencies keep releasing new patch
 patch versions that push up the minimum required Rust version. At the time of
@@ -154,17 +165,17 @@ Issues closed:
   blockquotes
 - [#84][issue-84]: Release update to crates.io with syn 1.0
 
-### Version 0.8.1 — 2019-04-03
+### Version 0.8.1 (2019-04-03)
 
 Dependencies were relaxed to make it easier to upgrade version-sync.
 
-### Version 0.8.0 — 2019-03-28
+### Version 0.8.0 (2019-03-28)
 
 We now use [Rust 2018][rust-2018], which means we require Rust version 1.31.0 or
 later. The `assert_html_root_url_updated!` macro will again report accurate line
 numbers based on span information from the syn crate.
 
-### Version 0.7.0 — 2019-01-14
+### Version 0.7.0 (2019-01-14)
 
 Special characters are now correctly escaped in the `{name}` and `{version}`
 placeholders in `assert_contains_regex!`.
@@ -172,7 +183,7 @@ placeholders in `assert_contains_regex!`.
 Dependencies were updated and version-sync now requires Rust version 1.27.2 or
 later.
 
-### Version 0.6.0 — 2018-11-22
+### Version 0.6.0 (2018-11-22)
 
 You can use `assert_contains_regex!` to grep files for the current version
 number. The search is done with a regular expression where `{version}` is
@@ -195,7 +206,7 @@ Issues closed:
 - [#39][issue-39]: Version 0.5 requires Rust version 1.21.0
 - [#42][issue-42]: Handle Git dependencies
 
-### Version 0.5.0 — 2017-11-19
+### Version 0.5.0 (2017-11-19)
 
 Dependencies were updated and version-sync now requires Rust version 1.21 or
 later.
@@ -203,7 +214,7 @@ later.
 Error messages from `assert_html_root_url_updated!` now again include line
 numbers (based on a heuristic until the syn crate can provide the information).
 
-### Version 0.4.0 — 2017-11-01
+### Version 0.4.0 (2017-11-01)
 
 This release replaces the dependency on the abandoned syntex_syntax with with a
 dependency on the much lighter syn crate. This improves compilation speed.
@@ -211,7 +222,7 @@ Unfortunately, the syn crate does not provide information about line numbers, so
 error messages are are no longer as good. We might be able to work around that
 in a later version.
 
-### Version 0.3.1 — 2017-09-26
+### Version 0.3.1 (2017-09-26)
 
 This release fixes a small problem with the handling of pre-release identifiers.
 
@@ -219,7 +230,7 @@ Issues closed:
 
 - [#19][issue-19]: Pre-release identifiers were ignored.
 
-### Version 0.3.0 — 2017-09-23
+### Version 0.3.0 (2017-09-23)
 
 When checking dependencies in READMEs, TOML blocks can now be excluded from the
 check by adding `no_sync` to the language line:
@@ -234,12 +245,12 @@ your_crate = "0.1"
 This TOML block will not be checked. This is similar to `no_run` for Rust code
 blocks.
 
-### Version 0.2.0 — 2017-09-20
+### Version 0.2.0 (2017-09-20)
 
 Added `assert_html_root_url_updated!` which will check that the `html_root_url`
 attribute points to the correct version of the crate documentation on docs.rs.
 
-### Version 0.1.3 — 2017-09-18
+### Version 0.1.3 (2017-09-18)
 
 First public release with support for finding outdated version numbers in
 `dependencies` and `dev-dependencies`.
@@ -254,7 +265,7 @@ Contributions will be accepted under the same license.
 [build-status]: https://github.com/mgeisler/version-sync/actions?query=workflow%3Abuild+branch%3Amaster
 [codecov]: https://codecov.io/gh/mgeisler/version-sync
 [crates-io]: https://crates.io/crates/version-sync
-[api-docs]: https://docs.rs/version-sync/0.9.4/
+[api-docs]: https://docs.rs/version-sync/0.9/
 [rust-2018]: https://doc.rust-lang.org/edition-guide/rust-2018/
 [mit]: LICENSE
 [issue-17]: https://github.com/mgeisler/version-sync/issues/17

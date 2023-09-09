@@ -1,6 +1,6 @@
 [package]
 name = "version-sync"
-version = "0.9.4"
+version = "0.9.5"
 authors = ["Martin Geisler <martin@geisler.net>"]
 categories = ["development-tools", "rust-patterns"]
 documentation = "https://docs.rs/version-sync/"

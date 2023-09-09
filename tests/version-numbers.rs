@@ -9,7 +9,7 @@ fn test_readme_deps() {
 fn test_readme_changelog() {
     version_sync::assert_contains_regex!(
         "README.md",
-        r"^### Version {version} — 20\d\d-\d\d-\d\d$"
+        r"^### Version {version} \(20\d\d-\d\d-\d\d\)$"
     );
 }
 
