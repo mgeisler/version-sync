@@ -7,7 +7,7 @@ use url::Url;
 use crate::helpers::{indent, read_file, version_matches_request, Result};
 
 fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
-    let url = Url::parse(value).map_err(|err| format!("parse error: {}", err))?;
+    let url = Url::parse(value).map_err(|err| format!("parse error: {err}"))?;
 
     // We can only reason about docs.rs.
     if url.domain().is_some() && url.domain() != Some("docs.rs") {
@@ -48,7 +48,7 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
         // [1]: https://rust-lang-nursery.github.io/api-guidelines/documentation.html
         // #crate-sets-html_root_url-attribute-c-html-root
         VersionReq::parse(request)
-            .map_err(|err| format!("could not parse version in URL: {}", err))
+            .map_err(|err| format!("could not parse version in URL: {err}"))
             .and_then(|request| version_matches_request(version, &request))
     }
 }
@@ -66,11 +66,11 @@ fn url_matches(value: &str, pkg_name: &str, version: &Version) -> Result<()> {
 /// succinct error message. Status information has then already been
 /// printed on `stdout`.
 pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
-    let code = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+    let code = read_file(path).map_err(|err| format!("could not read {path}: {err}"))?;
     let version = Version::parse(pkg_version)
-        .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
+        .map_err(|err| format!("bad package version {pkg_version:?}: {err}"))?;
     let krate: syn::File = syn::parse_file(&code)
-        .map_err(|_| format!("could not parse {}: please run \"cargo build\"", path))?;
+        .map_err(|_| format!("could not parse {path}: please run \"cargo build\""))?;
 
     println!("Checking doc attributes in {path}...");
     for attr in krate.attrs {
@@ -105,15 +105,15 @@ pub fn check_html_root_url(path: &str, pkg_name: &str, pkg_version: &str) -> Res
                     let source_lines = code.lines().take(last_line).skip(first_line - 1);
                     match check_result {
                         Ok(()) => {
-                            println!("{} (line {}) ... ok", path, first_line);
+                            println!("{path} (line {first_line}) ... ok");
                             return Ok(());
                         }
                         Err(err) => {
-                            println!("{} (line {}) ... {} in", path, first_line, err);
+                            println!("{path} (line {first_line}) ... {err} in");
                             for line in source_lines {
                                 println!("{}", indent(line));
                             }
-                            return Err(meta.error(format!("html_root_url errors in {}", path)));
+                            return Err(meta.error(format!("html_root_url errors in {path}")));
                         }
                     }
                 }

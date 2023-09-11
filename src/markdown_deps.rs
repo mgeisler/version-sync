@@ -34,7 +34,7 @@ fn extract_version_request(pkg_name: &str, block: &str) -> Result<VersionReq> {
                 });
             match version {
                 Some(version) => VersionReq::parse(version)
-                    .map_err(|err| format!("could not parse dependency: {}", err)),
+                    .map_err(|err| format!("could not parse dependency: {err}")),
                 None => Err(format!("no dependency on {pkg_name}")),
             }
         }
@@ -127,9 +127,9 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
 /// error message. Status information has then already been printed on
 /// `stdout`.
 pub fn check_markdown_deps(path: &str, pkg_name: &str, pkg_version: &str) -> Result<()> {
-    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+    let text = read_file(path).map_err(|err| format!("could not read {path}: {err}"))?;
     let version = Version::parse(pkg_version)
-        .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
+        .map_err(|err| format!("bad package version {pkg_version:?}: {err}"))?;
 
     println!("Checking code blocks in {path}...");
     let mut failed = false;
