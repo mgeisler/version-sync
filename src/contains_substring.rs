@@ -30,7 +30,7 @@ pub fn check_contains_substring(
         .replace("{name}", pkg_name)
         .replace("{version}", pkg_version);
 
-    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+    let text = read_file(path).map_err(|err| format!("could not read {path}: {err}"))?;
 
     println!("Searching for \"{pattern}\" in {path}...");
     match text.find(&pattern) {

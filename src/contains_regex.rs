@@ -50,8 +50,8 @@ pub fn check_contains_regex(
     builder.multi_line(true);
     let re = builder
         .build()
-        .map_err(|err| format!("could not parse template: {}", err))?;
-    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+        .map_err(|err| format!("could not parse template: {err}"))?;
+    let text = read_file(path).map_err(|err| format!("could not read {path}: {err}"))?;
 
     println!("Searching for \"{pattern}\" in {path}...");
     match re.find(&text) {
@@ -103,7 +103,7 @@ pub fn check_only_contains_regex(
     pkg_version: &str,
 ) -> Result<()> {
     let version = Version::parse(pkg_version)
-        .map_err(|err| format!("bad package version {:?}: {}", pkg_version, err))?;
+        .map_err(|err| format!("bad package version {pkg_version:?}: {err}"))?;
 
     let pattern = template
         .replace("{name}", &escape(pkg_name))
@@ -111,11 +111,11 @@ pub fn check_only_contains_regex(
     let re = RegexBuilder::new(&pattern)
         .multi_line(true)
         .build()
-        .map_err(|err| format!("could not parse template: {}", err))?;
+        .map_err(|err| format!("could not parse template: {err}"))?;
 
     let semver_re = Regex::new(SEMVER_RE).unwrap();
 
-    let text = read_file(path).map_err(|err| format!("could not read {}: {}", path, err))?;
+    let text = read_file(path).map_err(|err| format!("could not read {path}: {err}"))?;
 
     println!("Searching for \"{template}\" in {path}...");
     let mut errors = 0;
@@ -127,7 +127,7 @@ pub fn check_only_contains_regex(
 
         for semver in semver_re.find_iter(m.as_str()) {
             let semver_request = VersionReq::parse(semver.as_str())
-                .map_err(|err| format!("could not parse version: {}", err))?;
+                .map_err(|err| format!("could not parse version: {err}"))?;
             let result = version_matches_request(&version, &semver_request);
             match result {
                 Err(err) => {
