@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - master
-  schedule:
-    - cron: "30 18 * * 5" # Every Friday at 18:30 UTC
 
 env:
   CARGO_TERM_COLOR: always
