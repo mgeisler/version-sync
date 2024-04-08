@@ -19,7 +19,7 @@ contains_regex = ["regex", "semver"]
 
 [dependencies]
 proc-macro2 = { version = "1.0.36", default-features = false, features = ["span-locations"], optional = true }
-pulldown-cmark = { version = "0.9.1", default-features = false, optional = true }
+pulldown-cmark = { version = "0.10.2", default-features = false, optional = true }
 regex = { version = "1.5.4", default-features = false, features = ["std", "unicode"], optional = true }
 semver = { version = "1.0.5", optional = true }
 syn = { version = "2.0.15", default-features = false, features = ["parsing", "printing", "full"], optional = true }
