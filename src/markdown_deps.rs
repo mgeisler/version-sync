@@ -1,6 +1,6 @@
 #![cfg(feature = "markdown_deps_updated")]
 use pulldown_cmark::CodeBlockKind::Fenced;
-use pulldown_cmark::{Event, Parser, Tag};
+use pulldown_cmark::{Event, Parser, Tag, TagEnd};
 use semver::{Version, VersionReq};
 use toml::Value;
 
@@ -78,7 +78,7 @@ fn find_toml_blocks(text: &str) -> Vec<CodeBlock> {
                     block.content.push_str(&code);
                 }
             }
-            Event::End(Tag::CodeBlock(_)) => {
+            Event::End(TagEnd::CodeBlock) => {
                 if let Some(block) = current_block.take() {
                     code_blocks.push(block);
                 }
